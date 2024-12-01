@@ -1,0 +1,35 @@
+Name
+description
+color|stamina|strength|wisdom|additional effects
+
+Start
+Starting tile
+Y|0|0|0|none
+
+End
+Pride Rock
+O|0|0|0|none
+
+Regular
+Grasslands
+G|0|0|0|random
+
+Graveyard
+Uh-oh, you’ve stumbled into the Graveyard! Move back 10 tiles and lose 100 Stamina, Strength, and Wisdom Points.
+R|-100|-100|-100|back
+
+Hyenas
+The Hyenas are on the prowl! They drag you back to where you were last, and the journey comes at a cost. Return to previous position and lose 300 stamina points.
+N|-300|0|0|previous
+
+Oasis
+You’ve found a peaceful oasis! Take an extra turn, take a deep breath and relax; Gain 200 Stamina, Strength, and Wisdom Points
+B|200|200|200|extra
+
+Challenge
+Time for a test of wits! Land here, and you’ll face a random riddle. Answer correctly, and you’ll earn a boost of 500 Points to your Wisdom Trait—your cleverness pays off!
+U|0|0|0|riddle
+
+Counseling
+Welcome to the land of enrichment - when landing on this tile, your Stamina, Strength, and Wisdom Points increase by 300, and you get to choose an advisor from the available list of advisors. If you already have an advisor, you can switch your advisor out for a different one from the list or keep your original advisor. Don’t forget - an advisor can protect you from random events that negatively impact your Pride Points.
+P|300|300|300|advisor

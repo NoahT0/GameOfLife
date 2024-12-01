@@ -1,0 +1,11 @@
+Name
+graveyard|hyena|oasis|challenge|(counseling is remaining) (first half)
+graveyard|hyena|oasis|challenge|(counseling is remaining) (second half)
+
+Training
+20|20|25|20
+20|20|15|30
+
+Pride Lands
+5|5|5|50
+15|15|25|25
