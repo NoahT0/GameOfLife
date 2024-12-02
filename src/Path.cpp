@@ -32,6 +32,58 @@ ifstream getInputStream(string file_name)
 
     return input_file;
 }
+
+ifstream iterateToStringInStream(string file_name, string strings[], int size)
+{
+    ifstream input_file = getInputStream(file_name);
+
+    if(size == 0)
+    {
+        return input_file;
+    }
+
+    string line;
+    while(getline(input_file, line) && line != strings[0])
+    {
+        // Iterate until first string is found
+    }
+
+    if(line != strings[0])
+    {
+        cout << strings[0] << " not found in file " << file_name << endl;
+    }
+    assert(line == strings[0]);
+
+    int index = 1;
+    bool is_found = true;
+    while(index < size && is_found)
+    {
+        // Iterate to next string in strings vector
+        is_found = false;
+        while(!is_found && getline(input_file, line) && line.length() > 0)
+        {
+            if(line == strings[index])
+            {
+                is_found = true;
+                index ++;
+            }
+        }
+
+    }
+
+    if(!is_found)
+    {
+        cout << strings[index] << " not found after " << strings[index-1] << " and before a blank line in file " << file_name << endl;
+    }
+    assert(is_found);
+    return input_file;
+}
+// Assumes blank line between description and other lines
+ifstream iteratePastDescription(string file_name)
+{
+    string arr[1] = {""};
+    return iterateToStringInStream(file_name, arr,1);
+}
 vector<string> vectorSplit(string input_string, char separator)
 {
     vector <string> result;
@@ -61,6 +113,14 @@ vector<string> vectorSplit(string input_string, char separator)
     return result;
 }
 
+string toUpperString(string str)
+{
+    for(int i = 0; i < str.length(); i++)
+    {
+        str[i] = toupper(str[i]);
+    }
+    return str;
+}
 
 Path::Path(string name, string leadership, bool start_advisor, int size)
 {
@@ -79,17 +139,69 @@ Path::Path(string name, string leadership, bool start_advisor, int size)
     _start_pride_points = leadership_arr[3];
 
     _start_with_advisor = start_advisor;
-
+    
     initializeTiles();
+    initializeEvents();
 
+}
+void Path::initializeEvents()
+{
+    string arr[2] = {_name, "Random Events:"};
+    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
+
+    string line;
+    getline(path_file,line);
+    vector<string> event_names =  vectorSplit(line, '|');
+
+    path_file.close();
+
+    vector<Event> events = getPossibleEvents();
+
+    for(int i = 0; i < event_names.size(); i++)
+    {
+        Event event = getEventByName(event_names[i], events);
+        assert(event.name == event_names[i]);
+        _events.push_back(event);
+    }
+
+}
+vector<Event> Path::getPossibleEvents()
+{
+    ifstream event_file = getInputStream("random_events.txt");
+    string line;
+    vector<Event> possible_events;
+    while(getline(event_file, line))
+    {   
+        // Name|Description|Advisor|Pride Points
+        string arr[4];
+        split(line, '|', arr, 4);
+        Event event = {arr[0], arr[1], arr[2], stoi(arr[3])};
+        possible_events.push_back(event);
+    }
+
+    return possible_events;
+}
+Event Path::getEventByName(string name, vector<Event> events)
+{
+    for(int i = 0; i<events.size(); i++)
+    {
+        if(events[i].name == name)
+        {
+            return events[i];
+        }
+    }
+    return Event();
 }
 
 void Path::initializeTiles()
 {
-    vector<Tile> tiles = getTiles();
-    vector<int> percentages = getTilePercentages(true);
-    // number of special tiles must be the same in both paths.txt and tile_types.txt. The +4 = 3 basic tiles + one less special tile in paths
-    assert(tiles.size() == percentages.size() + 4); 
+    vector<Tile> tiles = getAllTiles();
+    vector<vector<int>> all_percentages = getTilePercentages();
+    vector<Tile> special_tiles = getPossibleSpecialTiles();
+    vector<int> percentages = all_percentages[0];
+    assert(special_tiles.size() == percentages.size()); // There must be same amount of special tiles and special tiles percentages in paths.txt 
+
+    int percentage_index = 1;
 
     int total_green = getGreenCount();
 
@@ -113,8 +225,13 @@ void Path::initializeTiles()
         }
         else
         {
-            
-            int color_choice = rand() % 100;
+            // Total percent doesn't have to add to 100. Percent values are more like weights
+            int total_percent = 0;
+            for(int i = 0; i<percentages.size(); i++)
+            {
+                total_percent += percentages[i];
+            }
+            int color_choice = rand() % total_percent;
             int cur_percentage = percentages[0];
 
             int count = 0;
@@ -133,85 +250,153 @@ void Path::initializeTiles()
             {
                 count++;
             }
-            // count + 3 since special tiles come after start, grassland and end tiles
-            _tiles[i] = tiles[count+3];
+
+            _tiles[i] = special_tiles[count];
 
         }
         
-        // Switch to second half percentages
-        if(i == total_tiles/2)
+        // Switch to next section percentages
+        /*
+        Example: all_percentages has size 3 so percentages = all_percentages[0] from i = 0 to 17 (1 * 52 / 3)
+        then percentages = all_percentages[1] from i = 18 to 34 (2 * 52 / 3) 
+        and finally percentages = all_percentages[2] from i = 35 to the end
+        */
+        if(i == percentage_index * total_tiles/all_percentages.size())
         {
-            percentages = getTilePercentages(false);
-
+            percentages = all_percentages[percentage_index];
+            assert(special_tiles.size() == percentages.size()); // There must be same amount of special tiles and special tiles percentages in paths.txt
+            percentage_index ++;
         }
     }
     
 }
 int Path::getGreenCount()
 {
-    //ifstream path_file("Files/paths.txt");
-    ifstream path_file = getInputStream("paths.txt");
-    
+    string arr[2] = {_name, "Path Initialization:"};
+    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
+
     string line;
-
-    // Iterate to correct path
-    while(line != _name)
-    {
-        getline(path_file,line);
-    }
-    // Iterate to tile initialization section of path data
-    while(line != "Tile Initialization:")
-    {
-        getline(path_file,line);
-    }
-
     getline(path_file,line);
     int green_count = stoi(line);
 
     path_file.close();
+
     return green_count;
 }
-vector<int> Path::getTilePercentages(bool is_first_half)
+vector<vector<int>> Path::getTilePercentages()
 {
 
-    vector<int> percentages;
+    vector<vector<int>> percentages;
 
-    ifstream path_file = getInputStream("paths.txt");
+    string arr[2] = {_name, "Tiles and Percentages:"};
+    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
 
     string line;
-
-    // Iterate to correct path
-    while(line != _name)
-    {
-        getline(path_file,line);
-    }
-    // Iterate to tile initialization section of path data
-    while(line != "Tile Initialization:")
-    {
-        getline(path_file,line);
-    }
-
-    // Move past green count
+    
+    // Increment past tile type description
     getline(path_file,line);
 
-    getline(path_file, line);
     vector<string> str_perc;
-
-    if(!is_first_half)
+    
+    while(getline(path_file,line) && line != "Random Events:")
     {
-        getline(path_file,line);
+        str_perc = vectorSplit(line, '|');
+        vector<int> int_perc;
+
+        // Convert string vector to int vector
+        for(int i = 0; i<str_perc.size(); i++)
+        {
+            int_perc.push_back(stoi(str_perc[i]));
+            //percentages.push_back(stoi(str_perc[i]));
+        }
+        percentages.push_back(int_perc);
     }
-    str_perc = vectorSplit(line, '|');
+    path_file.close();
+    
+    return percentages;
+}
+vector<string> Path::getPossibleSpecialTileNames()
+{
+    vector<string> names;
+
+    string arr[2] = {_name, "Tiles and Percentages:"};
+    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
+
+    string line;
+    getline(path_file,line);
 
     path_file.close();
+    vector<string> tile_names = vectorSplit(line,'|');
 
-    // Convert string vector to int vector
-    for(int i = 0; i<str_perc.size(); i++)
+    return tile_names;
+}
+vector<Tile> Path::getPossibleSpecialTiles()
+{
+    vector<Tile> all_tiles = getAllTiles();
+    vector<string> special_names = getPossibleSpecialTileNames();
+    
+    vector<Tile> special_tiles;
+    for(int i = 0; i < special_names.size(); i++)
     {
-        percentages.push_back(stoi(str_perc[i]));
+        Tile tile = getTileByName(special_names[i], all_tiles);
+        assert(toUpperString(tile.getName()) == toUpperString(special_names[i])); // Tile must be successfully found by name
+
+        special_tiles.push_back(tile);
     }
 
-    return percentages;
+    return special_tiles;
+}
+Tile Path::getTileByName(string name, vector<Tile> tiles)
+{
+    name = toUpperString(name);
+    for(int i = 0; i < tiles.size(); i++)
+    {
+        if(name == toUpperString(tiles[i].getName()))
+        {
+            return tiles[i];
+        }
+    }
+
+    return Tile();
+}
+vector<Tile> Path::getAllTiles()
+{
+    vector<Tile> tiles;
+
+    // Iterate past description
+    string arr[1] = {""};
+    ifstream tile_file = iteratePastDescription("tile_types.txt");
+
+    string line;
+    while(getline(tile_file,line))
+    {
+        Tile tile;
+
+        // Set name and description of tile
+        tile.setName(line);
+        getline(tile_file, line);
+        tile.setDescription(line);
+        
+        // Get and set starting stats
+        getline(tile_file,line);
+        string arr[5];
+        split(line,'|',arr,5);
+
+        tile.setColor(arr[0][0]);
+        tile.setStaminaChange(stoi(arr[1]));
+        tile.setStrengthChange(stoi(arr[2]));
+        tile.setWisdomChange(stoi(arr[3]));
+        tile.setAdditionalEffect(arr[4]);
+
+        // Get blank line
+        getline(tile_file,line);
+
+        tiles.push_back(tile);
+    }
+
+    tile_file.close();
+
+    return tiles;
 }
 
 string Path::colorFromCharacter(char color)
@@ -264,49 +449,7 @@ void Path::displayTile(int pos, vector<int> on_tile, int width)
 
 }
 
-vector<Tile> Path::getTiles()
-{
-    vector<Tile> tiles;
 
-    //ifstream tile_file("Files/tile_types.txt");
-    ifstream tile_file = getInputStream("tile_types.txt");  
-
-    string line = " ";
-
-    // Iterate past description
-    while(line.length() > 0)
-    {
-        getline(tile_file,line);
-    }
-
-    while(getline(tile_file,line))
-    {
-        Tile tile;
-        tile.setName(line);
-        getline(tile_file, line);
-        tile.setDescription(line);
-
-        getline(tile_file,line);
-        string arr[5];
-        split(line,'|',arr,5);
-
-
-        tile.setColor(arr[0][0]);
-        tile.setStaminaChange(stoi(arr[1]));
-        tile.setStrengthChange(stoi(arr[2]));
-        tile.setWisdomChange(stoi(arr[3]));
-        tile.setAdditionalEffect(arr[4]);
-
-        // Get blank line
-        getline(tile_file,line);
-
-        tiles.push_back(tile);
-    }
-
-    tile_file.close();
-
-    return tiles;
-}
 
 Tile Path::getTileAtPos(int pos)
 {
@@ -337,4 +480,8 @@ int Path::getStartStrength()
 int Path::getStartPridePoints()
 {
     return _start_pride_points;
+}
+vector<Event> Path::getEvents()
+{
+    return _events;
 }

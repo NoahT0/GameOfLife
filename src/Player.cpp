@@ -282,3 +282,19 @@ void Player::printStats()
     cout << "Pride Points: " << _pride_points << endl;
     
 }
+
+void Player::displayProgress(int index)
+{
+    cout << getPlayerTitle(index) << " has " << _pride_points << " pride points," << endl;
+    cout << _stamina << " stamina," << endl;
+    cout << _strength << " strength," << endl;
+    cout << "and " << _wisdom << " wisdom." << endl;
+}
+void Player::displayCharacter(int index)
+{
+    cout << getPlayerTitle(index) << " is " << _age << endl;
+}
+void Player::displayAdvisor(int index)
+{
+    cout << getPlayerTitle(index) << " advisor's is " << _advisor.getName() << endl;
+}

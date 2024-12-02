@@ -31,9 +31,7 @@ class Game
         Player advisorSelect(Player player, int player_index);
 
         string getRandomRiddle();
-
-        int getNumOfEvents(int path);
-        string getRandomEvent();
+        Event getRandomEvent(Path path);
 
         Board _board;
         int _turn;

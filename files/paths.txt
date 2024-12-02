@@ -1,36 +1,81 @@
 Member Variables:
 Name
 stamina|strength|wisdom|pride points
-start with advisor
-Tile Initialization:
+start with advisor, true or false (1 or 0)
+Path Initialization:
 greencount
-graveyard|hyena|oasis|challenge|(counseling is remaining) (first half)
-graveyard|hyena|oasis|challenge|(counseling is remaining) (second half)
+Tiles and Percentages:
+tile_name1|tile_name2|tile_name3|etc.
+tile_name1 percentage|tile_name2 percentage|tile_name3 percentage|etc. (first_section)
+tile_name1 percentage|tile_name2 percentage|tile_name3 percentage|etc. (second_section)
+etc.    (each section will get even amount of space on board)
 Random Events:
-Description |
-Advisor (0 = none; 1 = Rafiki; 2 = Nala; 3 = Sarabi; 4 = Zazu; 5 = Sarafina) | PridePoints (lose or gain)
+Deser|Night|Energy|etc
 
 Cub Training
 500|500|1000|-5000
 1
-Tile Initialization:
+Path Initialization:
 30
-20|20|25|20
-20|20|15|30
+Tiles and Percentages:
+graveyard|hyenas|oasis|challenge|counseling
+20|20|25|20|15
+20|20|15|30|15
 Random Events:
-Desert storm sweeps through the territory|4|-500
-Fatigue from intense training with pride warriors|3|-200
-Observed a rare natural phenomenon|0|600
+Desert|Fatigue|Observe
 
 Straight to the Pride Lands
 200|200|200|5000
 0
-Tile Initialization:
+Path Initialization:
 20
-40|5|5|50
-15|15|25|25
+Tiles and Percentages:
+graveyard|hyenas|oasis|challenge|counseling
+40|5|5|50|0
+15|15|25|25|20
 Random Events:
-Desert storm sweeps through the territory|4|-500
-Challenging night watch duty under pitch-black conditions|2|-400
-Extra energy from bountiful season|0|800
-Gained wisdom from observing Rafiki’s rituals|0|500
+Desert|Night|Energy|Wisdom
+
+LeButtHole
+2000|2000|2000|23400
+1
+Path Initialization:
+0
+Tiles and Percentages:
+graveyard|hyenas|oasis|challenge|counseling
+0|0|0|1|0
+0|0|0|0|1
+0|1|0|0|0
+Random Events:
+Desert|Night|Energy|Wisdom
+
+LeNuttHole
+2000|2000|2000|23400
+0
+Path Initialization:
+0
+Tiles and Percentages:
+graveyard|hyenas
+1|0
+0|1
+1|0
+0|1
+1|0
+0|1
+1|0
+0|1
+1|0
+0|1
+Random Events:
+Desert|Night|Energy|Wisdom
+
+GrassPlusOne
+2000|2000|2000|23400
+0
+Path Initialization:
+49
+Tiles and Percentages:
+graveyard
+1
+Random Events:
+Desert|Night|Energy|Wisdom

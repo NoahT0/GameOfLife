@@ -114,47 +114,6 @@ void Tile::setAdditionalEffect(string additional_effect)
 {
     _additional_effect = additional_effect;
 }
-/*
-void Tile::setAllByName(string name)
-{
-    ifstream special_file("Files/tile_types.txt");
-
-    if(!special_file.is_open())
-    {
-        cout << "Failed to open tile_types.txt." << endl;
-        return;
-    }
-
-    string line;
-    while(getline(special_file,line) && line != name)
-    {
-        // Iterate until get to tile name
-    }
-
-    if(line != name)
-    {
-        cout << "Name not found." << endl;
-        return;
-    }
-    _name = name;
-    getline(special_file,line);
-    _description = line;
-
-    getline(special_file,line);
-    string arr[5];
-    split(line,'|',arr,5);
-
-    special_file.close();
-
-    _color = arr[0][0];
-    _stamina_change = stoi(arr[1]);
-    _strength_change = stoi(arr[2]);
-    _wisdom_change = stoi(arr[3]);
-    _additional_effect = arr[4];
-
-}
-*/
-
 
 Player Tile::changePlayerStats(Player player)
 {

@@ -12,30 +12,12 @@
 #define GREY "\033[48;2;128;128;128m" /* Grey (128,128,128) */
 #define RESET "\033[0m"
 
-string toUpperString(string str)
-{
-    for(int i = 0; i < str.length(); i++)
-    {
-        str[i] = toupper(str[i]);
-    }
-    return str;
-}
-
 void Board::initializeBoard()
 {
-    // Seed random number generator in your main function once
 
-    //ifstream path_file("Files/paths.txt");
-    ifstream path_file = getInputStream("paths.txt");
+    ifstream path_file = iteratePastDescription("paths.txt");
 
     string line = " ";
-
-    // Iterate past description
-    while(line.length() > 0)
-    {
-        getline(path_file,line);
-    }
-
     
     string name;
     string leadership;
@@ -151,15 +133,18 @@ int Board::getWidthOfTile(int path, int pos)
 // Gets the necessary width of a tile since sometimes a tile may have to be wider on one path since it is wider on another
 int Board::getMaxWidthOfTile(int pos)
 {
-    int first = getWidthOfTile(0,pos);
-    int second = getWidthOfTile(1,pos);
+    int max_width = 0;
 
-    if(first>second)
+    for(int i = 0; i< _paths.size(); i++)
     {
-        return first;
+        int width = getWidthOfTile(i,pos);
+        if(width>max_width)
+        {
+            max_width = width;
+        }
     }
 
-    return second;
+    return max_width;
 }
 
 void Board::displayTrack(int path)
@@ -177,10 +162,9 @@ void Board::displayBoard()
     
     for (int i = 0; i < _paths.size(); i++)
     {
+        cout << _paths[i].getName() << ":" << endl;
         displayTrack(i);
-        if (i == 0) {
-            cout << endl; // Add an extra line between the two lanes
-        }
+        cout << endl; // Add line between lanes
     }
 }
 void Board::setPlayerPosition(int player_index, int pos)

@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <fstream>
+#include <cassert>
 
 bool validateInt(string input)
 {
@@ -51,7 +52,6 @@ Game::Game()
     _board = Board(players);
     
     players = pathSelect(players, _board.getPaths());
-    cout << "Player"<< players[0].getPath() << endl;
     players = initializePlayersOnPath(players);
     
     _board.setPlayers(players);
@@ -70,7 +70,9 @@ vector<Player> Game::characterSelect()
         // Print possible character options
         cout << "Possible characters: " << endl;
         printPlayerStats(possible_players);
-        cout << "Player " << count << " enter character name or 'X' to move one:" << endl;
+
+        // Get input for player selection
+        cout << "Player " << count << " enter character name or 'X' to move on:" << endl;
         cin >> name;
         name = toUpperString(name);
 
@@ -298,31 +300,13 @@ string Game::getRandomRiddle()
     return line;
 }
 
-int Game::getNumOfEvents(int path)
+Event Game::getRandomEvent(Path path)
 {
-   return 0;
-}
-string Game::getRandomEvent()
-{
-    int num_events = getNumOfLinesInFile("random_events.txt");
-    int event_number = rand() % num_events;
+    vector<Event> events = path.getEvents();
 
-    ifstream event_file = getInputStream("random_events.txt");
+    int choice = rand() % events.size();
 
-    string line;
-    int count = 0;
-
-    while(getline(event_file, line) && count != event_number)
-    {
-        if(line.length() > 0)
-        {
-            count++;
-        }  
-    }
-
-    event_file.close();
-
-    return line;
+    return events[choice];
 }
 
 void Game::takeTurn()
@@ -364,19 +348,16 @@ void Game::doPlayerAction(int choice)
     switch(choice)
     {
         case 1:
-            cout << player.getPlayerTitle(_turn) << " has " << player.getPridePoints() << " pride points," << endl;
-            cout << player.getStamina() << " stamina," << endl;
-            cout << player.getStrength() << " strength," << endl;
-            cout <<"and " << player.getWisdom() << " wisdom." << endl;
+            player.displayProgress(_turn);
             break;
         case 2:
-            cout << player.getPlayerTitle(_turn) << " is " << player.getAge() << endl;
+            player.displayCharacter(_turn);
             break;
         case 3:
             _board.displayBoard();
             break;
         case 4:
-            cout << player.getPlayerTitle(_turn) << " advisor's is " << player.getAdvisor().getName() << endl;
+            player.displayAdvisor(_turn);
             break;
         case 5:
             movePlayer();
@@ -389,14 +370,18 @@ void Game::movePlayer()
 {
     Player player = _board.getPlayerAtIndex(_turn);
 
+    // Generate random numer 1-6 for roll
     cout << "Spinning..." << endl;
-
     int roll = rand() % 6 + 1;
     cout << player.getPlayerTitle(_turn) << " rolled a " << roll << "." << endl;
+    cout << endl;
 
+    // Move player and display updated board
     _board.movePlayer(_turn,roll);
-    player = _board.getPlayerAtIndex(_turn);
     _board.displayBoard();
+
+    // Apply the tile's effect to player
+    player = _board.getPlayerAtIndex(_turn);
     player = applyTileEffect(roll);
 
     _board.setPlayerAtIndex(_turn, player); 
@@ -423,7 +408,7 @@ int Game::getNumPlayers()
 {
     return _board.getPlayers().size();
 }
-
+// Change player stats based off what tile they landed on and also apply special effect to player
 Player Game::applyTileEffect(int roll)
 {
     Player player = _board.getPlayerAtIndex(_turn);
@@ -434,34 +419,54 @@ Player Game::applyTileEffect(int roll)
     string effect = tile.getAdditionalEffect();
     if(effect == "random")
     {
-
+        // 50% chance to do random event
         int do_random = rand() % 2;
         
         if(do_random == 0)
         {
-            string event = getRandomEvent();
-            string arr[4];
-            split(event, '|', arr,4);
+            Path player_path = _board.getPaths()[player.getPath()];
+            Event event = getRandomEvent(player_path);
+
+            cout << event.description << endl;
+            if(event.pride_points>0)
+            {
+                cout << "Gain " << event.pride_points << " Pride Points!" << endl;
+                player.addPridePoints(event.pride_points);
+            }
+            else if(player.getAdvisor().getName() == event.advisor_name)
+            {
+                cout << event.advisor_name << " protects you!" << endl;
+            }
+            else
+            {
+                cout << "You lose " << (event.pride_points*-1) << " Pride Points." << endl;
+                player.addPridePoints(event.pride_points);
+            }   
+
         }
     }
     else if(effect == "back")
     {
+        // Move back 10
         int newPos = player.getPosition()-10;
-        newPos = clamp(newPos,0,_board.getBoardSize());
+        newPos = clamp(newPos,0,player.getPosition());
         player.setPosition(newPos);
     }
     else if(effect == "previous")
     {
+        // Moves back to previous position
         int newPos = player.getPosition()-roll;
         player.setPosition(newPos);
         cout << player.getPosition() << endl;
     }
     else if(effect == "extra")
     {
+        // Gives player an extra turn
        _extra_turn = true;
     }
     else if(effect == "advisor")
     {
+        // Allow player to select an advisor or choose a different one
         if(player.getAdvisor().getName() == "none")
         {
             player = advisorSelect(player,_turn);
@@ -481,6 +486,7 @@ Player Game::applyTileEffect(int roll)
     }
     else if(effect == "riddle")
     {
+        // Test players with random riddle and reward with wisdom if they get it correct
         string riddle = getRandomRiddle();
         string riddle_arr[2];
         split(riddle, '|',riddle_arr, 2);

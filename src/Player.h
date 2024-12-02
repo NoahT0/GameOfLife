@@ -39,6 +39,10 @@ class Player
         void addPridePoints(int added_pride_points);
         void move();
 
+
+        void displayProgress(int index);
+        void displayCharacter(int index);
+        void displayAdvisor(int index);
         void printStats();
         void printStatsWithArt(int imageNum);
 
