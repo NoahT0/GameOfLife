@@ -22,7 +22,19 @@ void stringToIntArray(string arr1[], int arr2[], int size)
 //int split(string input_string, char separator, string arr[], const int ARR_SIZE);
 ifstream getInputStream(string file_name)
 {
-    ifstream input_file("../files/" + file_name);
+    ifstream theme_file("../files/theme_choice.txt");
+    if(!theme_file.is_open())
+    {
+        cout << "theme_choice.txt" << " failed to open." << endl;
+        cout << "add it inside the files folder " << endl;
+    }
+    assert(theme_file.is_open());
+    string theme;
+    getline(theme_file,theme);
+    theme_file.close();
+
+
+    ifstream input_file("../files/" + theme + "/" + file_name);
     
     if(!input_file.is_open())
     {
@@ -33,8 +45,9 @@ ifstream getInputStream(string file_name)
     return input_file;
 }
 
-ifstream iterateToStringInStream(string file_name, string strings[], int size)
+ifstream iterateToStringInStream(string file_name, vector<string> strings)
 {
+    int size = strings.size();
     ifstream input_file = getInputStream(file_name);
 
     if(size == 0)
@@ -81,9 +94,51 @@ ifstream iterateToStringInStream(string file_name, string strings[], int size)
 // Assumes blank line between description and other lines
 ifstream iteratePastDescription(string file_name)
 {
-    string arr[1] = {""};
-    return iterateToStringInStream(file_name, arr,1);
+    return iterateToStringInStream(file_name, {""});
 }
+
+vector<string> getStatNames()
+{
+    ifstream stat_file = getInputStream("stat_settings.txt");
+    
+    string line;
+    getline(stat_file, line);
+    stat_file.close();
+
+    vector<string> stat_names = vectorSplit(line, '|');
+    stat_names.pop_back();  // Get rid of main stat
+
+    return stat_names;
+}
+
+string getMainStatName()
+{
+    ifstream stat_file = getInputStream("stat_settings.txt");
+    
+    string line;
+    getline(stat_file, line);
+    stat_file.close();
+
+    vector<string> stats = vectorSplit(line, '|');
+
+    return stats[stats.size()-1];
+}
+
+int getIndexOfStatByName(string name)
+{
+    vector<string> stat_names = getStatNames();
+
+    for(int i = 0; i<stat_names.size(); i++)
+    {
+        if(toUpperString(stat_names[i]) == toUpperString(name))
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 vector<string> vectorSplit(string input_string, char separator)
 {
     vector <string> result;
@@ -112,6 +167,16 @@ vector<string> vectorSplit(string input_string, char separator)
     
     return result;
 }
+vector<int> vectorStringToInt(vector<string> vec)
+{
+    vector<int> result(vec.size());
+    for(int i = 0; i<result.size(); i++)
+    {
+        result[i] = stoi(vec[i]);
+    }
+    
+    return result;
+}
 
 string toUpperString(string str)
 {
@@ -122,41 +187,38 @@ string toUpperString(string str)
     return str;
 }
 
-Path::Path(string name, string leadership, bool start_advisor, int size)
+Path::Path(string name, vector<int> start_stats, bool start_advisor, int size)
 {
 
     _name = name;
     _size = size;
 
-    string arr[4];
-    int leadership_arr[4];
-    split(leadership,'|',arr,4);
-    stringToIntArray(arr, leadership_arr,4);
+    // string arr[4];
+    // int leadership_arr[4];
+    // split(leadership,'|',arr,4);
+    // stringToIntArray(arr, leadership_arr,4);
 
-    _start_stamina = leadership_arr[0];
-    _start_strength = leadership_arr[1];
-    _start_wisdom = leadership_arr[2];
-    _start_pride_points = leadership_arr[3];
+    
+    _start_main_stat = start_stats[start_stats.size()-1];
+    start_stats.pop_back(); // Remove the main stat from start_stats
+    _start_stats = start_stats;
 
     _start_with_advisor = start_advisor;
     
     initializeTiles();
     initializeEvents();
-
+    
 }
 void Path::initializeEvents()
 {
-    string arr[2] = {_name, "Random Events:"};
-    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
-
+    ifstream path_file = iterateToStringInStream("paths.txt", {_name, "Random Events:"});
+    
     string line;
     getline(path_file,line);
     vector<string> event_names =  vectorSplit(line, '|');
 
     path_file.close();
-
     vector<Event> events = getPossibleEvents();
-
     for(int i = 0; i < event_names.size(); i++)
     {
         Event event = getEventByName(event_names[i], events);
@@ -172,9 +234,9 @@ vector<Event> Path::getPossibleEvents()
     vector<Event> possible_events;
     while(getline(event_file, line))
     {   
-        // Name|Description|Advisor|Pride Points
-        string arr[4];
-        split(line, '|', arr, 4);
+        // Name|Description|Advisor|Main stat
+        vector<string> arr = vectorSplit(line, '|');
+        assert(arr.size() == 4);
         Event event = {arr[0], arr[1], arr[2], stoi(arr[3])};
         possible_events.push_back(event);
     }
@@ -272,8 +334,7 @@ void Path::initializeTiles()
 }
 int Path::getGreenCount()
 {
-    string arr[2] = {_name, "Path Initialization:"};
-    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
+    ifstream path_file = iterateToStringInStream("paths.txt", {_name, "Path Initialization:"});
 
     string line;
     getline(path_file,line);
@@ -288,8 +349,7 @@ vector<vector<int>> Path::getTilePercentages()
 
     vector<vector<int>> percentages;
 
-    string arr[2] = {_name, "Tiles and Percentages:"};
-    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
+    ifstream path_file = iterateToStringInStream("paths.txt", {_name, "Tiles and Percentages:"});
 
     string line;
     
@@ -319,8 +379,7 @@ vector<string> Path::getPossibleSpecialTileNames()
 {
     vector<string> names;
 
-    string arr[2] = {_name, "Tiles and Percentages:"};
-    ifstream path_file = iterateToStringInStream("paths.txt", arr, 2);
+    ifstream path_file = iterateToStringInStream("paths.txt", {_name, "Tiles and Percentages:"});
 
     string line;
     getline(path_file,line);
@@ -367,6 +426,7 @@ vector<Tile> Path::getAllTiles()
     string arr[1] = {""};
     ifstream tile_file = iteratePastDescription("tile_types.txt");
 
+    int num_of_stats = getStatNames().size();
     string line;
     while(getline(tile_file,line))
     {
@@ -377,16 +437,25 @@ vector<Tile> Path::getAllTiles()
         getline(tile_file, line);
         tile.setDescription(line);
         
-        // Get and set starting stats
+        // Get/Set color and additional effects
         getline(tile_file,line);
-        string arr[5];
-        split(line,'|',arr,5);
+        string arr[2];
+        split(line,'|',arr,2);
 
         tile.setColor(arr[0][0]);
-        tile.setStaminaChange(stoi(arr[1]));
-        tile.setStrengthChange(stoi(arr[2]));
-        tile.setWisdomChange(stoi(arr[3]));
-        tile.setAdditionalEffect(arr[4]);
+        tile.setAdditionalEffect(arr[1]);
+
+        // tile.setStaminaChange(stoi(arr[1]));
+        // tile.setStrengthChange(stoi(arr[2]));
+        // tile.setWisdomChange(stoi(arr[3]));
+        // tile.setAdditionalEffect(arr[4]);
+
+        //Get/set Stats
+        getline(tile_file,line);
+        vector<string> stats = vectorSplit(line, '|');
+        assert(stats.size() == num_of_stats);   // Make sure correct # of stats is defined in tile_types for each tile
+        tile.setStats(vectorStringToInt(stats));
+
 
         // Get blank line
         getline(tile_file,line);
@@ -465,21 +534,30 @@ bool Path::getStartAdvisor()
 {
     return _start_with_advisor;
 }
-int Path::getStartStamina()
+// int Path::getStartStamina()
+// {
+//     return _start_stamina;
+// }
+// int Path::getStartWisdom()
+// {
+//     return _start_wisdom;
+// }
+// int Path::getStartStrength()
+// {
+//     return _start_strength;
+// }
+// int Path::getStartPridePoints()
+// {
+//     return _start_pride_points;
+// }
+
+int Path::getStartMainStat()
 {
-    return _start_stamina;
+    return _start_main_stat;
 }
-int Path::getStartWisdom()
+vector<int> Path::getStartStats()
 {
-    return _start_wisdom;
-}
-int Path::getStartStrength()
-{
-    return _start_strength;
-}
-int Path::getStartPridePoints()
-{
-    return _start_pride_points;
+    return _start_stats;
 }
 vector<Event> Path::getEvents()
 {

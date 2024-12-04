@@ -1,6 +1,6 @@
 Member Variables:
 Name
-stamina|strength|wisdom|pride points
+stat1|stat2|stat3|etc|pride points
 start with advisor, true or false (1 or 0)
 Path Initialization:
 greencount
@@ -12,70 +12,51 @@ etc.    (each section will get even amount of space on board)
 Random Events:
 Deser|Night|Energy|etc
 
-Cub Training
-500|500|1000|-5000
+Super Senior
+1000|500|200|1000|-5000
 1
 Path Initialization:
-30
+10
 Tiles and Percentages:
-graveyard|hyenas|oasis|challenge|counseling
+TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
 20|20|25|20|15
 20|20|15|30|15
 Random Events:
-Desert|Fatigue|Observe
+Groin|Fatigue|Diddy
 
-Straight to the Pride Lands
-200|200|200|5000
-0
+College
+500|200|500|500|5000
+1
 Path Initialization:
 20
 Tiles and Percentages:
-graveyard|hyenas|oasis|challenge|counseling
+TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
 40|5|5|50|0
 15|15|25|25|20
 Random Events:
-Desert|Night|Energy|Wisdom
+Groin|CaughtLying|Diddy|Hennesy
 
-LeButtHole
-2000|2000|2000|23400
-1
-Path Initialization:
+Straight to the NBA
+300|2000|2000|500|233400
 0
+Path Initialization:
+40
 Tiles and Percentages:
-graveyard|hyenas|oasis|challenge|counseling
+TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
 0|0|0|1|0
 0|0|0|0|1
 0|1|0|0|0
 Random Events:
-Desert|Night|Energy|Wisdom
+Groin|CaughtLying|Diddy|Hennesy
 
-LeNuttHole
-2000|2000|2000|23400
-0
+Shanghai Sharks
+20000|20000|500|10000|-5000
+20
 Path Initialization:
 0
 Tiles and Percentages:
-graveyard|hyenas
-1|0
-0|1
-1|0
-0|1
-1|0
-0|1
-1|0
-0|1
-1|0
-0|1
+LeRiddle|LeOver
+10|1
+1|10
 Random Events:
-Desert|Night|Energy|Wisdom
-
-GrassPlusOne
-2000|2000|2000|23400
-0
-Path Initialization:
-49
-Tiles and Percentages:
-graveyard
-1
-Random Events:
-Desert|Night|Energy|Wisdom
+Groin|CaughtLying|Taco|Hennesy

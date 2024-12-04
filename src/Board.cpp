@@ -1,6 +1,7 @@
 #include "Board.h"
 #include <iomanip>
 #include <fstream>
+#include <cassert>
 
 #define RED "\033[48;2;230;10;10m"
 #define GREEN "\033[48;2;34;139;34m" /* Grassy Green (34,139,34) */
@@ -12,6 +13,7 @@
 #define GREY "\033[48;2;128;128;128m" /* Grey (128,128,128) */
 #define RESET "\033[0m"
 
+
 void Board::initializeBoard()
 {
 
@@ -20,10 +22,11 @@ void Board::initializeBoard()
     string line = " ";
     
     string name;
-    string leadership;
+    vector<string> start_stats;
     bool start_advisor;
 
     bool set_new_path = true;
+    int num_of_stats = getStatNames().size();
     // Initialize new path then iterate until next path (when line is blank)
     while(getline(path_file,line))
     {
@@ -32,12 +35,16 @@ void Board::initializeBoard()
         {
             name = line;
             getline(path_file,line);
-            leadership = line;
+
+            start_stats = vectorSplit(line, '|');
             getline(path_file,line);
+            assert(start_stats.size() == num_of_stats+1);
+
             start_advisor = stoi(line);
 
-            _paths.push_back(Path(name, leadership, start_advisor, _BOARD_SIZE));
+            _paths.push_back(Path(name, vectorStringToInt(start_stats), start_advisor, _BOARD_SIZE));
             set_new_path = false;
+
         }
         
         if(line.length() == 0)
@@ -46,6 +53,7 @@ void Board::initializeBoard()
         }
     }
     path_file.close();
+    
 }
 
 vector<Path> Board::getPaths()
@@ -58,11 +66,7 @@ vector<Path> Board::getPaths()
 
 Board::Board()
 {
-    /*
-    _players.push_back(Player());
-    // Initialize tiles
-    initializeBoard();
-    */
+
 }
 Board::Board(int player_count)
 {
@@ -85,11 +89,6 @@ Board::Board(vector <Player> players)
     {
         _players.push_back(players[i]);
     }
-    //initializePlayersOnPath();
-    // for(int i = 0; i<_players.size(); i++)
-    // {
-    //     cout << _players[i].getAdvisor().getName() << endl;
-    // }
 
     initializeBoard();
     
@@ -114,7 +113,6 @@ vector<int> Board::playersOnTile(int path, int pos)
         if(isPlayerOnTile(i,path,pos))
         {
             players.push_back(i);
-            //cout << i << endl;
         }
     }
     return players;

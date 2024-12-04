@@ -1,6 +1,8 @@
 #include "Player.h"
 #include <fstream>
 #include <iomanip>
+#include <cassert>
+
 
 int clamp(int num, int lower, int upper)
 {
@@ -22,48 +24,28 @@ int clamp(int num, int lower, int upper)
 
     return num;
 }
-
+vector<string> getStatNames();
+string getMainStatName();
 
 Player::Player()
 {
     _name = "";
-    _strength = 100;
-    _stamina = 100;
-    _wisdom = 100;
     _age = 1;
-    _pride_points = 0;
     _path = 0;
     _position = 0;
 
 }
 
-Player::Player(string name, int strength, int stamina, int wisdom)
+Player::Player(string name, vector<int> stats)
 {
     _name = name;
-    _strength = strength;
-    _stamina = stamina;
-    _wisdom = wisdom;
     _age = 1;
-    _strength = clamp(_strength, 100, 1000);
-    _stamina = clamp(_stamina, 100, 1000);
-    _wisdom = clamp(_wisdom, 100, 1000);
-    _pride_points = 0;
     _path = 0;
     _position = 0;
-}
-Player::Player(string name, int strength, int stamina, int wisdom, int path)
-{
-    _name = name;
-    _strength = strength;
-    _stamina = stamina;
-    _wisdom = wisdom;
-    _age = 1;
-    _strength = clamp(_strength, 100, 1000);
-    _stamina = clamp(_stamina, 100, 1000);
-    _wisdom = clamp(_wisdom, 100, 1000);
-    _pride_points = 0;
-    _path = path;
-    _position = 0;
+
+    _stats = stats;
+    _main_stat = 0;
+
 }
 
 string Player::getName()
@@ -71,19 +53,24 @@ string Player::getName()
     return _name;
 }
 
-int Player::getStrength()
-{
-    return _strength;
-}
+// int Player::getStrength()
+// {
+//     return _strength;
+// }
 
-int Player::getStamina()
-{
-    return _stamina;
-}
+// int Player::getStamina()
+// {
+//     return _stamina;
+// }
 
-int Player::getWisdom()
+// int Player::getWisdom()
+// {
+//     return _wisdom;
+// }
+
+int Player::getStatAtIndex(int index)
 {
-    return _wisdom;
+    return _stats[index];
 }
 
 int Player::getAge()
@@ -91,9 +78,9 @@ int Player::getAge()
     return _age;
 }
 
-int Player::getPridePoints()
+int Player::getMainStat()
 {
-    return _pride_points;
+    return _main_stat;
 }
 
 int Player::getPath()
@@ -116,40 +103,51 @@ void Player::setName(string name)
 {
     _name = name;
 }
-bool Player::setStrength(int strength)
-{
+// bool Player::setStrength(int strength)
+// {
     
-    _strength = strength;
-    if(_strength <100)
+//     _strength = strength;
+//     if(_strength <100)
+//     {
+//         _strength = 100;
+//         return false;
+//     }
+//     return true;
+// }
+// bool Player::setStamina(int stamina)
+// {
+//     _stamina = stamina;
+//     if(_stamina < 100)
+//     {
+//         _stamina = 100;
+//         return false;
+//     }
+//     return true;
+// }
+// bool Player::setWisdom(int wisdom)
+// {
+//     _wisdom = wisdom;
+//     if(_wisdom < 100)
+//     {
+//         _wisdom = 100;
+//         return false;
+//     }
+//     return true;
+// }
+bool Player::setStatAtIndex(int index, int stat)
+{
+    _stats[index] = stat;
+    if(_stats[index] < 100)
     {
-        _strength = 100;
+        _stats[index] = 100;
         return false;
     }
+
     return true;
 }
-bool Player::setStamina(int stamina)
+void Player::setMainStat(int main_stat)
 {
-    _stamina = stamina;
-    if(_stamina < 100)
-    {
-        _stamina = 100;
-        return false;
-    }
-    return true;
-}
-bool Player::setWisdom(int wisdom)
-{
-    _wisdom = wisdom;
-    if(_wisdom < 100)
-    {
-        _wisdom = 100;
-        return false;
-    }
-    return true;
-}
-void Player::setPridePoints(int pride_points)
-{
-    _pride_points = pride_points;
+    _main_stat = main_stat;
 }
 bool Player::setAge(int age)
 {
@@ -182,22 +180,23 @@ void Player::setAdvisor(Advisor advisor)
     _advisor = advisor;
 }
 
-bool Player::addStrength(int added_strength)
+bool Player::addStatAtIndex(int index, int added_stat)
 {
-    return setStrength(_strength + added_strength);
+    return setStatAtIndex(index,_stats[index] + added_stat);
 }
-bool Player::addStamina(int added_stamina)
+void Player::addMainStat(int added_main_stat)
 {
-    return setStamina(_stamina + added_stamina);
+    _main_stat += added_main_stat;
 }
-bool Player::addWisdom(int added_wisdom)
+void Player::addStats(vector<int> stats)
 {
-    return setWisdom(_wisdom + added_wisdom);
+    assert(stats.size() == _stats.size());
+    for(int i = 0; i < stats.size(); i++)
+    {
+        addStatAtIndex(i, stats[i]);
+    }
 }
-void Player::addPridePoints(int added_pride_points)
-{
-    _pride_points += added_pride_points;
-}
+
 void Player::move()
 {
     _position++;
@@ -209,10 +208,10 @@ void Player::printStatsWithArt(int imageNum)
     string stats_lines[5] = 
     {
         _name + ", age " + to_string(_age),
-        "Strength: " + to_string(_strength),
-        "Stamina: " + to_string(_stamina),
-        "Wisdom: " + to_string(_wisdom),
-        "Pride Points: " + to_string(_pride_points)
+        //"Strength: " + to_string(_strength),
+        //"Stamina: " + to_string(_stamina),
+        //"Wisdom: " + to_string(_wisdom),
+        "Pride Points: " + to_string(_main_stat)
         
     };
 
@@ -276,19 +275,37 @@ bool Player::iterateToImage(ifstream &input_file, int imageNum)
 void Player::printStats()
 {   
     cout << _name << ", age " << _age << endl;
-    cout << "Strength: " << _strength << endl;
-    cout << "Stamina: " << _stamina << endl;
-    cout << "Wisdom: " << _wisdom << endl;
-    cout << "Pride Points: " << _pride_points << endl;
+    vector<string> stat_names = getStatNames();
+    assert(stat_names.size() == _stats.size());
+
+    for(int i = 0; i < stat_names.size(); i++)
+    {
+        cout << stat_names[i] << ": " << _stats[i] << endl;
+    }
+    // cout << "Strength: " << _strength << endl;
+    // cout << "Stamina: " << _stamina << endl;
+    // cout << "Wisdom: " << _wisdom << endl;
+    cout << getMainStatName() << ": " << _main_stat << endl;
     
 }
 
 void Player::displayProgress(int index)
 {
-    cout << getPlayerTitle(index) << " has " << _pride_points << " pride points," << endl;
-    cout << _stamina << " stamina," << endl;
-    cout << _strength << " strength," << endl;
-    cout << "and " << _wisdom << " wisdom." << endl;
+    cout << getPlayerTitle(index) << " has " << _main_stat << " " << getMainStatName() << endl;
+
+    vector<string> stat_names = getStatNames();
+    assert(stat_names.size() == _stats.size());
+
+    for(int i = 0; i < stat_names.size()-1; i++)
+    {
+        cout << _stats[i] << " " << stat_names[i] << "," << endl;
+    }
+
+    cout << "and " << _stats[_stats.size()-1] << " " << stat_names[stat_names.size()-1] << "." << endl;
+    
+    // cout << _stamina << " stamina," << endl;
+    // cout << _strength << " strength," << endl;
+    // cout << "and " << _wisdom << " wisdom." << endl;
 }
 void Player::displayCharacter(int index)
 {

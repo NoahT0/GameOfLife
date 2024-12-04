@@ -5,18 +5,17 @@
 
 int clamp(int num, int lower, int upper);
 
+
+
 class Player
 {
     public:
         Player();
-        Player(string name, int strength, int stamina, int wisdom);
-        Player(string name, int strength, int stamina, int wisdom, int path);
+        Player(string name, vector<int> stats);
 
         string getName();
-        int getStrength();
-        int getStamina();
-        int getWisdom();
-        int getPridePoints();
+        int getStatAtIndex(int index);
+        int getMainStat();
         int getAge();
         int getPath();
         int getPosition();
@@ -24,21 +23,18 @@ class Player
         string getPlayerTitle(int index);
 
         void setName(string name);
-        bool setStrength(int strength);
-        bool setStamina(int stamina);
-        bool setWisdom(int wisdom);
-        void setPridePoints(int pride_points);
+
+        bool setStatAtIndex(int index, int stat);
+        void setMainStat(int main_stat);
         bool setAge(int age);
         bool setPath(int path);
         bool setPosition(int position);
         void setAdvisor(Advisor advisor);
 
-        bool addStrength(int added_strength);
-        bool addStamina(int added_stamina);
-        bool addWisdom(int added_wisdom);
-        void addPridePoints(int added_pride_points);
+        bool addStatAtIndex(int index, int added_stat);
+        void addMainStat(int added_main_stat);
+        void addStats(vector<int> stats);
         void move();
-
 
         void displayProgress(int index);
         void displayCharacter(int index);
@@ -48,12 +44,11 @@ class Player
 
     private:
         string _name;
-        int _strength;
-        int _stamina;
-        int _wisdom;
-        int _pride_points;
         int _age;
         Advisor _advisor;
+        vector<int> _stats;
+        int _main_stat;
+
         // Board stuff
         int _path;
         int _position;

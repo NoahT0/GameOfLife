@@ -70,19 +70,10 @@ string Tile::getDescription()
     return _description;
 }
 
-int Tile::getStaminaChange()
+vector<int> Tile::getStats()
 {
-    return _stamina_change;
+    return _stats;
 }
-int Tile::getStrengthChange()
-{
-    return _strength_change;
-}
-int Tile::getWisdomChange()
-{
-    return _wisdom_change;
-}
-
 string Tile::getAdditionalEffect()
 {
     return _additional_effect;
@@ -97,17 +88,9 @@ void Tile::setDescription(string description)
     _description = description;
 }
 
-void Tile::setStaminaChange(int stamina)
+void Tile::setStats(vector<int> stats)
 {
-    _stamina_change = stamina;
-}
-void Tile::setStrengthChange(int strength)
-{
-    _strength_change = strength;
-}
-void Tile::setWisdomChange(int wisdom)
-{
-    _wisdom_change = wisdom;
+    _stats = stats;
 }
 
 void Tile::setAdditionalEffect(string additional_effect)
@@ -117,9 +100,7 @@ void Tile::setAdditionalEffect(string additional_effect)
 
 Player Tile::changePlayerStats(Player player)
 {
-    player.addStamina(_stamina_change);
-    player.addStrength(_strength_change);
-    player.addWisdom(_wisdom_change);
-
+    player.addStats(_stats);
+    
     return player;
 }   

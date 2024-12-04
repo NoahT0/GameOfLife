@@ -13,28 +13,21 @@ class Tile
         char getColor();
         string getName();
         string getDescription();
-        int getStaminaChange();
-        int getStrengthChange();
-        int getWisdomChange();
+        vector<int> getStats();
         string getAdditionalEffect();
 
         void setColor(char color);
         void setName(string name);
         void setDescription(string description);
-        void setStaminaChange(int stamina);
-        void setStrengthChange(int strength);
-        void setWisdomChange(int wisdom);
+        void setStats(vector<int> stats);
         void setAdditionalEffect(string additional_effects);
 
-        //void setAllByName(string name);
         Player changePlayerStats(Player player);
     private:
         char _color;
         string _description;
         string _name;
-        int _stamina_change;
-        int _strength_change;
-        int _wisdom_change;
+        vector<int> _stats;
         string _additional_effect;
 
 };

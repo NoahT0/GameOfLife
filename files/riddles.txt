@@ -1,3 +1,0 @@
-I can hold multiple functions, but I’m not a list. What am I? (single word, lowercase)|class
-I start a comment in C++. What am I? (symbol)|//
-I am the number of bits in a byte. What am I? (integer)|8

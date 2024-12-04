@@ -1,0 +1,6 @@
+playerName|age|Points|Lying Ability|Aura|Wins|Lehenny Points
+2016 Bron|31|25000|800|1500|1000|20000
+Rookie Bron|19|2000|300|1000|300|20000
+Bronny|20|100|600|700|100|20000
+2010 Lebron(The Decision)|26|16000|800|300|800|20000
+LeSunshine|39|1000|500|10000|1000|20000

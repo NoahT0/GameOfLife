@@ -27,28 +27,33 @@ bool validateInt(string input)
     return true;
 }
 
-int getNumOfLinesInFile(string file_name)
+// int getNumOfLinesInFile(string file_name)
+// {
+//     ifstream input_file = getInputStream(file_name);
+
+//     string line;
+//     int count = 0;
+//     while(getline(input_file, line))
+//     {
+//         if(line.length() > 0)
+//         {
+//             count++;
+//         }  
+//     }
+
+//     input_file.close();
+
+//     return count;
+// }
+
+Game::Game(string theme)
 {
-    ifstream input_file = getInputStream(file_name);
+    // Set theme
+    ofstream theme_choice("../files/theme_choice.txt");
+    theme_choice << theme << endl;
+    theme_choice.close();
 
-    string line;
-    int count = 0;
-    while(getline(input_file, line))
-    {
-        if(line.length() > 0)
-        {
-            count++;
-        }  
-    }
-
-    input_file.close();
-
-    return count;
-}
-
-Game::Game()
-{
-    vector<Player> players =  characterSelect();
+    vector<Player> players = characterSelect();
     _board = Board(players);
     
     players = pathSelect(players, _board.getPaths());
@@ -73,7 +78,7 @@ vector<Player> Game::characterSelect()
 
         // Get input for player selection
         cout << "Player " << count << " enter character name or 'X' to move on:" << endl;
-        cin >> name;
+        getline(cin,name);
         name = toUpperString(name);
 
         if(name != "X")
@@ -168,14 +173,29 @@ vector<Player> Game::getPossiblePlayers()
     //ifstream character_input("Files/characters.txt");
     ifstream character_input = getInputStream("characters.txt");
 
+    // Increment past description
+    getline(character_input, line);
+
     while(getline(character_input, line))
     {
         // playerName|age|strength|stamina|wisdom|pridePoints
-        string arr[6];
-        split(line,'|',arr,6);
-        Player player(arr[0],stoi(arr[2]), stoi(arr[3]),stoi(arr[4]));
-        player.setAge(stoi(arr[1]));
-        player.setPridePoints(20000);
+        //string arr[6];
+       // split(line,'|',arr,6);
+        vector<string> traits = vectorSplit(line, '|');
+
+        // Get the stats of character(strength,stamina,wisdom)
+        vector<int> stats(traits.size()-3);
+        //cout << stats.size() << endl;
+        for(int i = 0; i<stats.size(); i++)
+        {
+            //cout << traits[i+2] << endl;
+            int stat = stoi(traits[i + 2]); // +2 since the first element in traits is name and the second is age
+            stats[i] = stat;
+        }
+
+        Player player(traits[0],stats);
+        player.setAge(stoi(traits[1]));
+        player.setMainStat(stoi(traits[traits.size()-1]));
         possible_players.push_back(player);
 
     }
@@ -192,10 +212,12 @@ vector<Player> Game::initializePlayersOnPath(vector<Player> players)
 
         Path path = paths[players[i].getPath()];
         // Add path's starting leadership and pride points 
-        players[i].addPridePoints(path.getStartPridePoints());
-        players[i].addStamina(path.getStartStamina());
-        players[i].addWisdom(path.getStartWisdom());
-        players[i].addStrength(path.getStartStrength());
+        players[i].addMainStat(path.getStartMainStat());
+        vector<int> stats = path.getStartStats();
+        players[i].addStats(stats);
+        // players[i].addStamina(path.getStartStamina());
+        // players[i].addWisdom(path.getStartWisdom());
+        // players[i].addStrength(path.getStartStrength());
 
         // If path starts with advisor then select advisor
         if(path.getStartAdvisor())
@@ -276,28 +298,29 @@ vector <Advisor> Game::getAdvisors()
     return advisors;
 }
 
-
-string Game::getRandomRiddle()
+vector<string> Game::getAllRiddles()
 {
-    int num_riddles = getNumOfLinesInFile("riddles.txt");
-    int riddle_num = rand() % num_riddles;
 
     ifstream riddle_file = getInputStream("riddles.txt");
 
-    string line;
-    int count = 0;
+    vector<string> riddles;
 
-    while(getline(riddle_file, line) && count != riddle_num)
+    string line;
+    while(getline(riddle_file, line))
     {
-        if(line.length() > 0)
-        {
-            count++;
-        }  
+        riddles.push_back(line);
     }
 
     riddle_file.close();
 
-    return line;
+    return riddles;
+}
+string Game::getRandomRiddle()
+{
+    vector<string> riddles = getAllRiddles();
+    int riddle_num = rand() % riddles.size();
+
+    return riddles[riddle_num];
 }
 
 Event Game::getRandomEvent(Path path)
@@ -428,10 +451,10 @@ Player Game::applyTileEffect(int roll)
             Event event = getRandomEvent(player_path);
 
             cout << event.description << endl;
-            if(event.pride_points>0)
+            if(event.main_stat>0)
             {
-                cout << "Gain " << event.pride_points << " Pride Points!" << endl;
-                player.addPridePoints(event.pride_points);
+                cout << "Gain " << event.main_stat << " " << getMainStatName() << "!" << endl;
+                player.addMainStat(event.main_stat);
             }
             else if(player.getAdvisor().getName() == event.advisor_name)
             {
@@ -439,8 +462,8 @@ Player Game::applyTileEffect(int roll)
             }
             else
             {
-                cout << "You lose " << (event.pride_points*-1) << " Pride Points." << endl;
-                player.addPridePoints(event.pride_points);
+                cout << "You lose " << (event.main_stat*-1) << " " << getMainStatName() << "." << endl;
+                player.addMainStat(event.main_stat);
             }   
 
         }
@@ -488,16 +511,22 @@ Player Game::applyTileEffect(int roll)
     {
         // Test players with random riddle and reward with wisdom if they get it correct
         string riddle = getRandomRiddle();
-        string riddle_arr[2];
-        split(riddle, '|',riddle_arr, 2);
-
-        cout << riddle_arr[0] << endl;
+        string riddle_arr[3];
+        split(riddle, '|',riddle_arr, 3);
+        cout << "Answer correctly, and you'll earn a boost of 500 Points to your " << riddle_arr[0] << " Trait—your cleverness pays off!" << endl;
+        cout << riddle_arr[1] << endl;
         string answer;
-        cin >> answer;
-        if(answer == riddle_arr[1])
+
+        cin.ignore();
+        getline(cin,answer);
+
+        int index = getIndexOfStatByName(riddle_arr[0]);
+        assert(index>=0);   // Make sure the stat is actually found
+
+        if(answer == riddle_arr[2])
         {
             cout << "You answered correct!" << endl;
-            player.addWisdom(500);
+            player.addStatAtIndex(index, 500);  // CHANGE LATER
         }
         else
         {

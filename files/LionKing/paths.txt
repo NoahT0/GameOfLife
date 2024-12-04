@@ -1,0 +1,74 @@
+Member Variables:
+Name
+stat1|stat2|stat3|etc|pride points
+start with advisor, true or false (1 or 0)
+Path Initialization:
+greencount
+Tiles and Percentages:
+tile_name1|tile_name2|tile_name3|etc.
+tile_name1 percentage|tile_name2 percentage|tile_name3 percentage|etc. (first_section)
+tile_name1 percentage|tile_name2 percentage|tile_name3 percentage|etc. (second_section)
+etc.    (each section will get even amount of space on board)
+Random Events:
+Deser|Night|Energy|etc
+
+Cub Training
+500|500|1000|-5000
+1
+Path Initialization:
+30
+Tiles and Percentages:
+graveyard|hyenas|oasis|challenge|counseling
+20|20|25|20|15
+20|20|15|30|15
+Random Events:
+Desert|Fatigue|Observe
+
+Straight to the Pride Lands
+200|200|200|5000
+0
+Path Initialization:
+20
+Tiles and Percentages:
+graveyard|hyenas|oasis|challenge|counseling
+40|5|5|50|0
+15|15|25|25|20
+Random Events:
+Desert|Night|Energy|Wisdom
+
+Test1
+2000|2000|2000|23400
+1
+Path Initialization:
+0
+Tiles and Percentages:
+graveyard|hyenas|oasis|challenge|counseling
+0|0|0|1|0
+0|0|0|0|1
+0|1|0|0|0
+Random Events:
+Desert|Night|Energy|Wisdom
+
+Lebron
+2000|2000|2000|23400
+0
+Path Initialization:
+0
+Tiles and Percentages:
+challenge|hyenas
+10|1
+1|10
+Random Events:
+Desert|Night|Energy|Wisdom
+
+GrassPlusOne
+2000|2000|2000|23400
+0
+Path Initialization:
+49
+Tiles and Percentages:
+graveyard|challenge
+1|1
+4|1
+Random Events:
+Desert|Night|Energy|Wisdom

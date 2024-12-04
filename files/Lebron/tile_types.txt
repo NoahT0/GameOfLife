@@ -1,0 +1,45 @@
+Name
+description
+color|additional effects
+stat1|stat2|stat3|etc.
+
+Start
+LeBirth
+Y|none
+0|0|0|0
+
+End
+LeRetirement
+O|none
+0|0|0|0
+
+Regular
+LeEvent
+G|random
+0|0|0|0
+
+TornACL
+Uh-oh, you brutally tore both ACLs! Move back 10 tiles and lose 100 Points, Wins, and Aura.
+R|back
+-100|0|-100|-100
+
+LeOver
+All the good players left your team! You're dragged back to a shitty team of Celtics Shaq, elimination game Klay Thompson and 2024 Kyle Kuzma. Return to previous position and lose 500 wins.
+N|previous
+0|0|0|-500
+
+FreeAgentSign
+Steph Curry team up! This is the game I love! Gain 200 wins, points, lying ability, and aura
+B|extra
+200|200|200|200
+
+LeRiddle
+So you're Lebron fan. I don't believe you know bron like I do tho tbh. Lets test you.
+U|riddle
+0|0|0|0
+
+Counseling
+Welcome to LeHelp. Choose a mentor to help you. You can switch too. 
+P|advisor
+300|300|300|300
+

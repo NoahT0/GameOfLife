@@ -6,7 +6,7 @@
 class Game
 {
     public:
-        Game();
+        Game(string theme);
         int getNumPlayers();
         void takeTurn();
         bool isFinished();
@@ -30,7 +30,9 @@ class Game
         int findAdvisorByName(vector <Advisor> advisors, string name);
         Player advisorSelect(Player player, int player_index);
 
+        vector<string> getAllRiddles();
         string getRandomRiddle();
+        
         Event getRandomEvent(Path path);
 
         Board _board;
