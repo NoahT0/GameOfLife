@@ -2,50 +2,6 @@
 #include <fstream>
 #include <cassert>
 
-bool validateInt(string input)
-{
-    int counter = 0;
-    if(input.length() == 0)
-    {
-        return 0;
-    }
-    if(input[0] == '-')
-    {
-        if(input[1] < 48 || input[1] > 57)
-        {
-            return false;
-        }
-        counter++;
-    }
-    for(unsigned int i = counter; i<input.length(); i++)
-    {
-        if(input[i] < 48 || input[i] > 57)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-// int getNumOfLinesInFile(string file_name)
-// {
-//     ifstream input_file = getInputStream(file_name);
-
-//     string line;
-//     int count = 0;
-//     while(getline(input_file, line))
-//     {
-//         if(line.length() > 0)
-//         {
-//             count++;
-//         }  
-//     }
-
-//     input_file.close();
-
-//     return count;
-// }
-
 Game::Game(string theme)
 {
     // Set theme
@@ -62,6 +18,8 @@ Game::Game(string theme)
     _board.setPlayers(players);
     _board.displayBoard();
     _turn = 0;
+
+    _extra_turn[0] = false;
     
 }
 vector<Player> Game::characterSelect()
@@ -215,9 +173,6 @@ vector<Player> Game::initializePlayersOnPath(vector<Player> players)
         players[i].addMainStat(path.getStartMainStat());
         vector<int> stats = path.getStartStats();
         players[i].addStats(stats);
-        // players[i].addStamina(path.getStartStamina());
-        // players[i].addWisdom(path.getStartWisdom());
-        // players[i].addStrength(path.getStartStrength());
 
         // If path starts with advisor then select advisor
         if(path.getStartAdvisor())
@@ -231,105 +186,6 @@ vector<Player> Game::initializePlayersOnPath(vector<Player> players)
         
     }
     return players;
-}
-Player Game::advisorSelect(Player player, int player_index)
-{
-    int advisor_index = -1;
-    while(advisor_index<0)
-    {
-        cout << "Advisor choices: " << endl;
-        vector<Advisor> advisors = getAdvisors();
-        for(int i = 0; i<advisors.size(); i++)
-        {
-            advisors[i].printProfile();
-        }
-        cout << endl;
-        cout << player.getPlayerTitle(player_index) << ", enter advisor name:" << endl;
-        string name;
-        cin >> name;
-        advisor_index = findAdvisorByName(advisors,name);
-
-        cout << endl;
-        if(advisor_index<0)
-        {
-            cout << "Invalid advisor name. Try again." << endl;
-        }
-        else
-        {
-            player.setAdvisor(advisors[advisor_index]);
-            cout << player.getPlayerTitle(player_index) << " chose " << advisors[advisor_index].getName() << "!" << endl;
-        }
-        cout << endl;
-    }
-
-    return player;
-}
-
-int Game::findAdvisorByName(vector <Advisor> advisors, string name)
-{
-    for(int i = 0; i<advisors.size(); i++)
-    {
-        if(toUpperString(advisors[i].getName()) == toUpperString(name))
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-vector <Advisor> Game::getAdvisors()
-{
-    vector<Advisor> advisors;
-    
-    //ifstream advisor_file("Files/advisors.txt");
-    ifstream advisor_file = getInputStream("advisors.txt");
-
-    string line;
-    int count = 1;
-    while(getline(advisor_file,line))
-    {
-        string arr[2];
-        split(line, '|',arr,2);
-        Advisor advisor(arr[0], arr[1], count);
-
-        advisors.push_back(advisor);
-        count++;
-    }
-    advisor_file.close();
-    return advisors;
-}
-
-vector<string> Game::getAllRiddles()
-{
-
-    ifstream riddle_file = getInputStream("riddles.txt");
-
-    vector<string> riddles;
-
-    string line;
-    while(getline(riddle_file, line))
-    {
-        riddles.push_back(line);
-    }
-
-    riddle_file.close();
-
-    return riddles;
-}
-string Game::getRandomRiddle()
-{
-    vector<string> riddles = getAllRiddles();
-    int riddle_num = rand() % riddles.size();
-
-    return riddles[riddle_num];
-}
-
-Event Game::getRandomEvent(Path path)
-{
-    vector<Event> events = path.getEvents();
-
-    int choice = rand() % events.size();
-
-    return events[choice];
 }
 
 void Game::takeTurn()
@@ -409,9 +265,9 @@ void Game::movePlayer()
 
     _board.setPlayerAtIndex(_turn, player); 
 
-    if(_extra_turn)
+    if(_extra_turn[0])
     {
-        _extra_turn = false;
+        _extra_turn[0] = false;
         _turn--;
     }
 }
@@ -436,104 +292,8 @@ Player Game::applyTileEffect(int roll)
 {
     Player player = _board.getPlayerAtIndex(_turn);
     Tile tile = _board.getTileAtPlayer(_turn);
-    cout << tile.getDescription() << endl;
-    player = tile.changePlayerStats(player);
-    
-    string effect = tile.getAdditionalEffect();
-    if(effect == "random")
-    {
-        // 50% chance to do random event
-        int do_random = rand() % 2;
-        
-        if(do_random == 0)
-        {
-            Path player_path = _board.getPaths()[player.getPath()];
-            Event event = getRandomEvent(player_path);
-
-            cout << event.description << endl;
-            if(event.main_stat>0)
-            {
-                cout << "Gain " << event.main_stat << " " << getMainStatName() << "!" << endl;
-                player.addMainStat(event.main_stat);
-            }
-            else if(player.getAdvisor().getName() == event.advisor_name)
-            {
-                cout << event.advisor_name << " protects you!" << endl;
-            }
-            else
-            {
-                cout << "You lose " << (event.main_stat*-1) << " " << getMainStatName() << "." << endl;
-                player.addMainStat(event.main_stat);
-            }   
-
-        }
-    }
-    else if(effect == "back")
-    {
-        // Move back 10
-        int newPos = player.getPosition()-10;
-        newPos = clamp(newPos,0,player.getPosition());
-        player.setPosition(newPos);
-    }
-    else if(effect == "previous")
-    {
-        // Moves back to previous position
-        int newPos = player.getPosition()-roll;
-        player.setPosition(newPos);
-        cout << player.getPosition() << endl;
-    }
-    else if(effect == "extra")
-    {
-        // Gives player an extra turn
-       _extra_turn = true;
-    }
-    else if(effect == "advisor")
-    {
-        // Allow player to select an advisor or choose a different one
-        if(player.getAdvisor().getName() == "none")
-        {
-            player = advisorSelect(player,_turn);
-        }
-        else
-        {
-            cout << "Your current advisor:" << endl;
-            player.getAdvisor().printProfile();
-            cout << "Would you like to switch advisors? Yes (Y) or No (N)" << endl;
-            char choice;
-            cin >> choice;
-            if(choice == 'Y')
-            {
-                player = advisorSelect(player,_turn);
-            }
-        }
-    }
-    else if(effect == "riddle")
-    {
-        // Test players with random riddle and reward with wisdom if they get it correct
-        string riddle = getRandomRiddle();
-        string riddle_arr[3];
-        split(riddle, '|',riddle_arr, 3);
-        cout << "Answer correctly, and you'll earn a boost of 500 Points to your " << riddle_arr[0] << " Trait—your cleverness pays off!" << endl;
-        cout << riddle_arr[1] << endl;
-        string answer;
-
-        cin.ignore();
-        getline(cin,answer);
-
-        int index = getIndexOfStatByName(riddle_arr[0]);
-        assert(index>=0);   // Make sure the stat is actually found
-
-        if(answer == riddle_arr[2])
-        {
-            cout << "You answered correct!" << endl;
-            player.addStatAtIndex(index, 500);  // CHANGE LATER
-        }
-        else
-        {
-            cout << "Wrong lmao." << endl;
-        }
-    }
-    return player;
+    Path player_path = _board.getPaths()[player.getPath()];
+    return tile.applyEffect(player,player_path.getEvents(), _turn, roll, _extra_turn);
 }
 
 bool Game::isFinished()

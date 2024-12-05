@@ -3,10 +3,6 @@
 
 #include "Advisor.h"
 
-int clamp(int num, int lower, int upper);
-
-
-
 class Player
 {
     public:

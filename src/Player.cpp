@@ -3,27 +3,6 @@
 #include <iomanip>
 #include <cassert>
 
-
-int clamp(int num, int lower, int upper)
-{
-    if(lower > upper)
-    {
-        int temp = lower;
-        lower = upper;
-        upper = temp;
-    }
-    if(num<lower)
-    {
-        num = lower;
-    }
-
-    if(num>upper)
-    {
-        num = upper;
-    }
-
-    return num;
-}
 vector<string> getStatNames();
 string getMainStatName();
 

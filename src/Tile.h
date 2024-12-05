@@ -2,9 +2,19 @@
 #define TILE_H
 
 #include "Player.h"
+#include "Helper.h"
 
-int getCharIndex(string input_string, char separator);
-int split(string input_string, char separator, string arr[], const int ARR_SIZE);
+Player advisorSelect(Player player, int player_index);
+vector<Advisor> getAdvisors();
+int findAdvisorByName(vector <Advisor> advisors, string name);
+
+struct Event
+{
+    string name;
+    string description;
+    string advisor_name;
+    int main_stat;
+};
 
 class Tile
 {
@@ -22,7 +32,18 @@ class Tile
         void setStats(vector<int> stats);
         void setAdditionalEffect(string additional_effects);
 
+        Player applyEffect(Player player, vector<Event> events, int turn, int roll, bool extra_turn[1]);
         Player changePlayerStats(Player player);
+        Player doRandom(Player player, vector<Event> events);
+        Player moveBack(Player player);
+        Player moveToPrevious(Player player, int roll);
+        Player switchAdvisor(Player player, int turn);
+        Player doRiddle(Player player);
+        
+        Event getRandomEvent(vector<Event> events);
+        vector<string> getAllRiddles();
+        string getRandomRiddle();
+
     private:
         char _color;
         string _description;

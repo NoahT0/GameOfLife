@@ -61,33 +61,41 @@ void displayOptions(vector<string> options_names)
         cout << (i+1) << ". " << options_names[i] << " (" << (i+1) << ")" << endl;
     }
 }
-
-int main()
+string theme_select()
 {
-    srand(time(0));
-    cout << " hello" << endl;
-    
     vector<string> option_names = getOptionNames();
     vector<string> options = getOptionFolders();
 
     displayOptions(option_names);
     cout << "Choose an option using the corresponding number: " << endl;
-    int choice;
-    cin >> choice;
-    while(choice < 1 || choice > option_names.size())
+
+    string choice_str;
+
+    getline(cin, choice_str);
+    while(!validateInt(choice_str) || stoi(choice_str) < 1 || stoi(choice_str) > option_names.size())
     {
         cout << "Invalid choice. Select a number between 1 and " << option_names.size() << endl;
         cout << endl;
         displayOptions(option_names);
 
         cout << "Choose an option using the corresponding number: " << endl;
-        cin >> choice;
+        getline(cin, choice_str);
     }
     cout << endl;
+
+    int choice = stoi(choice_str);
     cout << option_names[choice - 1] << " theme chose!" << endl << endl;
 
+    return options[choice-1];
+}
+int main()
+{
+    srand(time(0));
+    cout << " hello" << endl;
+    
+    string theme = theme_select();
 
-    Game game(options[choice-1]);
+    Game game(theme);
 
     while(!game.isFinished())
     {
@@ -97,5 +105,6 @@ int main()
 
     //add colors in file and don't specify change of points in description in tile types. 
     // Also add another element in tile types that is optional. Can be used to specify how far to move back
+    // Specify length of path in text file
     return 0;
 }

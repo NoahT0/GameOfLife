@@ -26,18 +26,10 @@ class Game
         Player applyTileEffect(int roll);
 
         vector<Player> initializePlayersOnPath(vector<Player> players);
-        vector<Advisor> getAdvisors();
-        int findAdvisorByName(vector <Advisor> advisors, string name);
-        Player advisorSelect(Player player, int player_index);
-
-        vector<string> getAllRiddles();
-        string getRandomRiddle();
-        
-        Event getRandomEvent(Path path);
 
         Board _board;
         int _turn;
-        bool _extra_turn = false;
+        bool _extra_turn[1];
 };
 
 #endif

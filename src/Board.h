@@ -5,8 +5,6 @@
 #include "Path.h"
 
 
-string toUpperString(string str);
-
 class Board
 {
     private:

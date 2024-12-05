@@ -43,7 +43,7 @@ Path Initialization:
 0
 Tiles and Percentages:
 graveyard|hyenas|oasis|challenge|counseling
-0|0|0|1|0
+0|0|1|0|0
 0|0|0|0|1
 0|1|0|0|0
 Random Events:

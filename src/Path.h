@@ -3,24 +3,6 @@
 
 #include "Tile.h"
 
-ifstream getInputStream(string file_name);
-ifstream iterateToStringInStream(string file_name, vector<string> strings);
-ifstream iteratePastDescription(string file_name);
-string toUpperString(string str);
-vector<int> vectorStringToInt(vector<string> vec);
-vector<string> vectorSplit(string input_string, char separator);
-vector<string> getStatNames();
-string getMainStatName();
-int getIndexOfStatByName(string name);
-
-struct Event
-{
-    string name;
-    string description;
-    string advisor_name;
-    int main_stat;   // CHANGE
-};
-
 class Path
 {
     public:
