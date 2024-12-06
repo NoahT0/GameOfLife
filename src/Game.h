@@ -18,7 +18,7 @@ class Game
         void printPlayerStats(vector<Player> players);
         int findCharacterByName(vector<Player> players, string name);
         vector<Player> characterSelect();
-        vector<Player> pathSelect(vector<Player> players, vector<Path> paths);
+        //vector<Player> pathSelect(vector<Player> players, vector<Path> paths);
         
         void displayMenu();
         void doPlayerAction(int choice);
@@ -26,6 +26,7 @@ class Game
         Player applyTileEffect(int roll);
 
         vector<Player> initializePlayersOnPath(vector<Player> players);
+        void updateTurn();
 
         Board _board;
         int _turn;

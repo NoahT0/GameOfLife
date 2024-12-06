@@ -264,16 +264,18 @@ vector<Tile> Path::getAllTiles()
         
         // Get/Set color and additional effects
         getline(tile_file,line);
-        string arr[2];
-        split(line,'|',arr,2);
+        vector<string> arr = vectorSplit(line,'|');
+        //split(line,'|',arr,2);
 
         tile.setColor(arr[0][0]);
         tile.setAdditionalEffect(arr[1]);
 
-        // tile.setStaminaChange(stoi(arr[1]));
-        // tile.setStrengthChange(stoi(arr[2]));
-        // tile.setWisdomChange(stoi(arr[3]));
-        // tile.setAdditionalEffect(arr[4]);
+        // Some tiles like move back x tiles will have extra data
+        // stored that specifies how much x is
+        if(arr.size() == 3)
+        {
+            tile.setExtraData(arr[2]);
+        }
 
         //Get/set Stats
         getline(tile_file,line);
@@ -291,6 +293,44 @@ vector<Tile> Path::getAllTiles()
     tile_file.close();
 
     return tiles;
+}
+
+string Path::getDescriptionDisplay()
+{
+    string result = _name + "\n";
+    result += "Size: " + to_string(_size) + "\n";
+    result += "Start with advisor: ";
+    if(_start_with_advisor)
+    {
+        result += "True \n";
+    }
+    else
+    {
+        result += "False \n";
+    }
+    vector<string> stat_names = getStatNames();
+    for(int i = 0; i < _start_stats.size(); i++)
+    {
+        if(_start_stats[i] < 0)
+        {
+            result += stat_names[i] + " deduction: " + to_string(-1 * _start_stats[i]) + "\n";
+        }
+        else
+        {
+            result += stat_names[i] + " boost: " + to_string(_start_stats[i]) + "\n";
+        }
+        
+    }
+    if(_start_main_stat > 0)
+    {
+        result += getMainStatName() + " boost: " + to_string(_start_main_stat);
+    }
+    else
+    {
+        result += getMainStatName() + " deduction: " + to_string(-1 * _start_main_stat);
+    }
+    
+    return result;
 }
 
 string Path::colorFromCharacter(char color)

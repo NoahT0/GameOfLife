@@ -20,8 +20,8 @@ G|random
 
 TornACL
 Uh-oh, you brutally tore both ACLs! Move back 10 tiles and lose 100 Points, Wins, and Aura.
-R|back
--100|0|-100|-100
+R|back|2
+-100|300|-600|-100
 
 LeOver
 All the good players left your team! You're dragged back to a shitty team of Celtics Shaq, elimination game Klay Thompson and 2024 Kyle Kuzma. Return to previous position and lose 500 wins.

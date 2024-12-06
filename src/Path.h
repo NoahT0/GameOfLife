@@ -12,11 +12,10 @@ class Path
         Tile getTileAtPos(int pos);
         string getName();
         bool getStartAdvisor();
-
         int getStartMainStat();
         vector<int> getStartStats();
-        
         vector<Event> getEvents();
+        string getDescriptionDisplay();
     
     private:
         static const int _BOARD_SIZE = 52;

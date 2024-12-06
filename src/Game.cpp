@@ -12,7 +12,14 @@ Game::Game(string theme)
     vector<Player> players = characterSelect();
     _board = Board(players);
     
-    players = pathSelect(players, _board.getPaths());
+    vector<Path> paths = _board.getPaths();
+    vector<string> path_names(paths.size());
+    for(int i = 0; i < path_names.size(); i++)
+    {
+        path_names[i] = paths[i].getDescriptionDisplay();
+    }
+    
+    players = pathSelect(players, path_names);
     players = initializePlayersOnPath(players);
     
     _board.setPlayers(players);
@@ -62,48 +69,7 @@ vector<Player> Game::characterSelect()
     cout << endl;
     return players;
 }
-vector<Player> Game::pathSelect(vector<Player> players, vector<Path> paths)
-{
-    //cout << "Size: " << paths.size() << endl;
-    for(int i = 0; i<players.size(); i++)
-    {
-        string choice;
-        bool is_path_picked = false;
 
-        // Loop until player picks a valid path
-        while(!is_path_picked)
-        {
-            
-            // Display path options
-            cout << players[i].getPlayerTitle(i) << " select path: " << endl;
-            cout << "1. " << paths[0].getName() << "(1)";
-            for(int i = 1; i<paths.size(); i++)
-            {
-                cout << " or " << (i+1) << ". " << paths[i].getName() << "(" << (i+1) << ")";
-            }
-            cout << endl;
-            
-            cin >> choice;
-            // First check if user entered an int then make sure it is a valid choice
-            if(!validateInt(choice) || stoi(choice) < 1 || stoi(choice) > paths.size())
-            {
-                cout << "Invalid path. Enter a number between 1 and " << paths.size() << endl;
-            }
-            else
-            {
-                players[i].setPath(stoi(choice)-1);
-                
-                cout << players[i].getPlayerTitle(i) << " chose " << paths[stoi(choice)-1].getName() << "!" << endl;
-                is_path_picked = true;
-                
-            }
-            cout << endl;
-        }
-        
-    }
-    
-    return players;
-}
 int Game::findCharacterByName(vector <Player> players, string name)
 {
     for(int i = 0; i<players.size(); i++)
@@ -217,8 +183,25 @@ void Game::takeTurn()
         
     }
     
+    updateTurn();
+}
+void Game::updateTurn()
+{
+    if(_board.areAllPlayersFinished())
+    {
+        return;
+    }
+
     _turn ++;
     _turn %= getNumPlayers();
+
+    // Iterate until player that isn't finish is found
+    while(_board.isPlayerFinshed(_turn))
+    {
+        _turn ++;
+        _turn %= getNumPlayers();
+    }
+    
 }
 void Game::doPlayerAction(int choice)
 {
@@ -293,7 +276,39 @@ Player Game::applyTileEffect(int roll)
     Player player = _board.getPlayerAtIndex(_turn);
     Tile tile = _board.getTileAtPlayer(_turn);
     Path player_path = _board.getPaths()[player.getPath()];
-    return tile.applyEffect(player,player_path.getEvents(), _turn, roll, _extra_turn);
+
+    cout << tile.getDescription() << endl;
+    player = tile.changePlayerStats(player);
+
+    string effect = tile.getAdditionalEffect();
+
+    if(effect == "random")
+    {
+        player = tile.doRandom(player, player_path.getEvents());
+    }
+    else if(effect == "back")
+    {
+        player = tile.moveBack(player);
+    }
+    else if(effect == "previous")
+    {
+        player = tile.moveToPrevious(player, roll);
+    }
+    else if(effect == "extra")
+    {
+        _extra_turn[0] = true;
+        player = tile.extraTurn(player);
+    }
+    else if(effect == "advisor")
+    {
+        player = tile.switchAdvisor(player, _turn);
+    }
+    else if(effect == "riddle")
+    {
+        player = tile.doRiddle(player);
+    }
+
+    return player;
 }
 
 bool Game::isFinished()

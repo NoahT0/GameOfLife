@@ -20,7 +20,7 @@ G|random
 
 Graveyard
 Uh-oh, you’ve stumbled into the Graveyard! Move back 10 tiles and lose 100 Stamina, Strength, and Wisdom Points.
-R|back
+R|back|10
 -100|-100|-100
 
 Hyenas

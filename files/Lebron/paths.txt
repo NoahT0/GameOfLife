@@ -55,7 +55,7 @@ Shanghai Sharks
 Path Initialization:
 0
 Tiles and Percentages:
-LeOver|LeRiddle
+TornACL|LeRiddle
 10|1
 1|10
 Random Events:

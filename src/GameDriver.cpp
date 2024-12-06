@@ -103,8 +103,7 @@ int main()
     }
     game.displayWinner();
 
-    //add colors in file and don't specify change of points in description in tile types. 
-    // Also add another element in tile types that is optional. Can be used to specify how far to move back
+    //add colors in file
     // Specify length of path in text file
     return 0;
 }
