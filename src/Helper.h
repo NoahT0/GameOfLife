@@ -9,6 +9,7 @@ int clamp(int num, int lower, int upper);
 int getCharIndex(string input_string, char separator);
 int split(string input_string, char separator, string arr[], const int ARR_SIZE);
 string toUpperString(string str);
+//ifstream getInputStream(string path_name, string file_name);
 ifstream getInputStream(string file_name);
 ifstream iterateToStringInStream(string file_name, vector<string> strings);
 ifstream iteratePastDescription(string file_name);

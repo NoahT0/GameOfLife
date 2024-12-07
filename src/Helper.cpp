@@ -173,6 +173,18 @@ int getIndexOfStatByName(string name)
     return -1;
 }
 
+// ifstream getInputStream(string path_name, string file_name)
+// {
+//     ifstream input_file(path_name + "/" + file_name);
+    
+//     if(!input_file.is_open())
+//     {
+//         cout << file_name << " failed to open." << endl;
+//     }
+//     assert(input_file.is_open());
+
+//     return input_file;
+// }
 
 ifstream getInputStream(string file_name)
 {
@@ -187,7 +199,7 @@ ifstream getInputStream(string file_name)
     getline(theme_file,theme);
     theme_file.close();
 
-
+    //return getInputStream("../files/" + theme + "/", file_name);
     ifstream input_file("../files/" + theme + "/" + file_name);
     
     if(!input_file.is_open())

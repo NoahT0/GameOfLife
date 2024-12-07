@@ -2,27 +2,16 @@
 #include <fstream>
 #include <cassert>
 
-#define RED "\033[48;2;230;10;10m"
-#define GREEN "\033[48;2;34;139;34m" /* Grassy Green (34,139,34) */
-#define BLUE "\033[48;2;10;10;230m"
-#define PINK "\033[48;2;255;105;180m"
-#define BROWN "\033[48;2;139;69;19m"
-#define PURPLE "\033[48;2;128;0;128m"
-#define ORANGE "\033[48;2;230;115;0m" /* Orange (230,115,0) */
-#define GREY "\033[48;2;128;128;128m" /* Grey (128,128,128) */
 #define RESET "\033[0m"
 
 Path::Path(string name, vector<int> start_stats, bool start_advisor, int size)
 {
 
+    // string red = "\033[4;2;230;10;10m";
+    // cout << "Red: " << red << endl;
+    // cout << "Blue: " << BLUE << endl;
     _name = name;
     _size = size;
-
-    // string arr[4];
-    // int leadership_arr[4];
-    // split(leadership,'|',arr,4);
-    // stringToIntArray(arr, leadership_arr,4);
-
     
     _start_main_stat = start_stats[start_stats.size()-1];
     start_stats.pop_back(); // Remove the main stat from start_stats
@@ -248,8 +237,9 @@ vector<Tile> Path::getAllTiles()
     vector<Tile> tiles;
 
     // Iterate past description
-    string arr[1] = {""};
     ifstream tile_file = iteratePastDescription("tile_types.txt");
+
+    vector<Color> colors = getPossibleColors();
 
     int num_of_stats = getStatNames().size();
     string line;
@@ -265,9 +255,11 @@ vector<Tile> Path::getAllTiles()
         // Get/Set color and additional effects
         getline(tile_file,line);
         vector<string> arr = vectorSplit(line,'|');
-        //split(line,'|',arr,2);
 
-        tile.setColor(arr[0][0]);
+        Color color = getColorByName(colors, arr[0]);
+        assert(toUpperString(color.name) == toUpperString(arr[0])); // Make sure corresponding color is found for color name specified in file
+        tile.setColor(color);
+
         tile.setAdditionalEffect(arr[1]);
 
         // Some tiles like move back x tiles will have extra data
@@ -333,35 +325,53 @@ string Path::getDescriptionDisplay()
     return result;
 }
 
-string Path::colorFromCharacter(char color)
+vector<Color> Path::getPossibleColors()
 {
-    switch(color)
+    ifstream color_file("../files/colors.txt");
+    if(!color_file.is_open())
     {
-        case 'R':
-            return RED;
-        case 'G':
-            return GREEN;
-        case 'B':
-            return BLUE;
-        case 'U':
-            return PURPLE;
-        case 'N':
-            return BROWN;
-        case 'P':
-            return PINK;
-        case 'O':
-            return ORANGE;
-        case 'Y':
-            return GREY;
+        cout << "colors.txt failed to open. Add it in the files folder" << endl;
     }
-    return GREEN;
+    assert(color_file.is_open());
+
+    vector<Color> colors;
+
+    string line;
+    while(getline(color_file,line))
+    {
+        string arr[4];
+        split(line, '|', arr, 4);
+
+        Color color;
+        color.name = arr[0];
+        // arr[1] - arr[3] correspond to rgb values
+        color.color_value = "\033[48;2;" + arr[1] + ";" + arr[2] + ";" + arr[3] + "m";
+
+        colors.push_back(color);
+    }
+    color_file.close();
+
+    return colors;
+}
+Color Path::getColorByName(vector<Color> colors, string name)
+{
+    for(int i = 0; i < colors.size(); i++)
+    {
+        if(toUpperString(colors[i].name) == toUpperString(name))
+        {
+            return colors[i];
+        }
+    }
+
+    return Color();
 }
 
 void Path::displayTile(int pos, vector<int> on_tile, int width)
 {
     // Template for displaying a tile: <line filler space> <color start> |<player symbol or blank space>| <reset color> <line filler space> <endl>
     // Determine color to display
-    string color = colorFromCharacter(_tiles[pos].getColor());
+    //string color = colorFromCharacter(_tiles[pos].getColor());
+    string color = _tiles[pos].getColor().color_value;
 
     if (on_tile.size()>0)
     {
@@ -383,8 +393,6 @@ void Path::displayTile(int pos, vector<int> on_tile, int width)
 
 }
 
-
-
 Tile Path::getTileAtPos(int pos)
 {
     return _tiles[pos];
@@ -399,23 +407,6 @@ bool Path::getStartAdvisor()
 {
     return _start_with_advisor;
 }
-// int Path::getStartStamina()
-// {
-//     return _start_stamina;
-// }
-// int Path::getStartWisdom()
-// {
-//     return _start_wisdom;
-// }
-// int Path::getStartStrength()
-// {
-//     return _start_strength;
-// }
-// int Path::getStartPridePoints()
-// {
-//     return _start_pride_points;
-// }
-
 int Path::getStartMainStat()
 {
     return _start_main_stat;

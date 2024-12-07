@@ -42,16 +42,16 @@ Straight to the NBA
 Path Initialization:
 30
 Tiles and Percentages:
-TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
-0|0|0|1|0
-0|0|0|0|1
-0|1|0|0|0
+LeOver|LeRiddle|counseling
+0|1|0
+0|0|1
+1|0|0
 Random Events:
 Groin|CaughtLying|Diddy|Hennesy|Lyrics
 
 Shanghai Sharks
 20000|20000|500|10000|-5000
-20
+1
 Path Initialization:
 0
 Tiles and Percentages:

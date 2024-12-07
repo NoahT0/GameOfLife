@@ -19,18 +19,24 @@ struct Event
     int main_stat;
 };
 
+struct Color
+{
+    string name;
+    string color_value;
+};
+
 class Tile
 {
     public:
         Tile();
-        char getColor();
+        Color getColor();
         string getName();
         string getDescription();
         vector<int> getStats();
         string getAdditionalEffect();
         string getExtraData();
 
-        void setColor(char color);
+        void setColor(Color color);
         void setName(string name);
         void setDescription(string description);
         void setStats(vector<int> stats);
@@ -52,7 +58,7 @@ class Tile
         string getStatWinsAndLoss();
 
     private:
-        char _color;
+        Color _color;
         string _description;
         string _name;
         vector<int> _stats;

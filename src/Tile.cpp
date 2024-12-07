@@ -36,7 +36,6 @@ vector<Advisor> getAdvisors()
 }
 Player advisorSelect(Player player, int player_index)
 {
-    cin.ignore();
     int advisor_index = -1;
     while(advisor_index<0)
     {
@@ -64,7 +63,6 @@ Player advisorSelect(Player player, int player_index)
         }
         cout << endl;
     }
-
     return player;
 }
 
@@ -103,7 +101,7 @@ vector<Player> pathSelect(vector<Player> players, vector<string> path_descriptio
         }
         
     }
-    
+    cin.ignore();
     return players;
 }
 
@@ -120,15 +118,15 @@ void displayPathOptions(Player player, int index, vector<string> path_descriptio
 
 Tile::Tile()
 {
-    _color = 'G';
+    _color = Color();
 }
 
-char Tile::getColor()
+Color Tile::getColor()
 {
     return _color;
 }
 
-void Tile::setColor(char color)
+void Tile::setColor(Color color)
 {
     _color = color;
 }
@@ -266,22 +264,30 @@ Player Tile::doRiddle(Player player)
 {
     // Test players with random riddle and reward with wisdom if they get it correct
     string riddle = getRandomRiddle();
-    string riddle_arr[3];
-    split(riddle, '|',riddle_arr, 3);
-    cout << "Answer correctly, and you'll earn a boost of 500 Points to your " << riddle_arr[0] << " Trait—your cleverness pays off!" << endl;
-    cout << riddle_arr[1] << endl;
-    string answer;
+    vector<string> riddle_arr = vectorSplit(riddle, '|');
+    assert(riddle_arr.size() == 4); // Must contain 4 elements: Stat Name|Question|Answer|Points rewarded
 
-    cin.ignore();
+    string stat_boost_name = riddle_arr[0];
+    string question = riddle_arr[1];
+    string correct_answer = riddle_arr[2];
+
+    assert(validateInt(riddle_arr[3])); // Must contain an int specifying how many points the player gets
+    int boost = stoi(riddle_arr[3]);
+
+    // Display possible reward and ask question
+    cout << "Answer correctly, and you'll earn a boost of " << boost << " points to your " << stat_boost_name << " Trait—your cleverness pays off!" << endl;
+    cout << question << endl;
+    
+    string answer;
     getline(cin,answer);
 
-    int index = getIndexOfStatByName(riddle_arr[0]);
+    int index = getIndexOfStatByName(stat_boost_name);
     assert(index>=0);   // Make sure the stat is actually found
 
-    if(toUpperString(answer) == toUpperString(riddle_arr[2]))
+    if(toUpperString(answer) == toUpperString(correct_answer))
     {
         cout << "You answered correct!" << endl;
-        player.addStatAtIndex(index, 500);  // CHANGE LATER
+        player.addStatAtIndex(index, boost);  // CHANGE LATER
     }
     else
     {
@@ -305,6 +311,8 @@ vector<string> Tile::getAllRiddles()
     vector<string> riddles;
 
     string line;
+    getline(riddle_file,line);  // Increment past description line
+
     while(getline(riddle_file, line))
     {
         riddles.push_back(line);

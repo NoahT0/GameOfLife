@@ -103,7 +103,7 @@ int main()
     }
     game.displayWinner();
 
-    //add colors in file
     // Specify length of path in text file
+    // advisor struct instead
     return 0;
 }

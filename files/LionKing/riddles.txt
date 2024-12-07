@@ -1,3 +1,4 @@
-Nugget|I can hold multiple functions, but I’m not a list. What am I? (single word, lowercase)|class
-Couch|I start a comment in C++. What am I? (symbol)|//
-Couch|I am the number of bits in a byte. What am I? (integer)|8
+Stat Name|Question|Answer|Points rewarded
+Nugget|I can hold multiple functions, but I’m not a list. What am I? (single word, lowercase)|class|500
+Couch|I start a comment in C++. What am I? (symbol)|//|500
+Couch|I am the number of bits in a byte. What am I? (integer)|8|400

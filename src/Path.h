@@ -32,7 +32,6 @@ class Path
         void initializeTiles();
         int getGreenCount();
         vector<vector<int>> getTilePercentages();
-        string colorFromCharacter(char color);
         vector<Tile> getAllTiles();
         vector<string> getPossibleSpecialTileNames();
         vector<Tile> getPossibleSpecialTiles();
@@ -41,6 +40,9 @@ class Path
         void initializeEvents();
         vector<Event> getPossibleEvents();
         Event getEventByName(string name, vector<Event>);
+
+        vector<Color> getPossibleColors();
+        Color getColorByName(vector<Color> colors, string name);
 
 };
 

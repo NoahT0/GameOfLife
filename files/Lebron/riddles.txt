@@ -1,7 +1,9 @@
-Points|How many rings does Lebron have?|4
-Lying Ability|What is Lebron's favorite saying?|Put yourself in situations where you're not comfortable
-Wins|How many kids does Lebron have?|3
-Aura|What is Lebron's middle name?|Raymone
-Lying Ability|When did Lebron start the book?|A couple days ago
-Lying Ability|How many points did Lebron predict Kobe to score on the night Kobe went for 81?|70
-Aura|Who's the nba's goat? (First and Last)|Lebron James
+Stat Name|Question|Answer|Points rewarded
+Points|How many rings does Lebron have?|4|300
+Lying Ability|What is Lebron's favorite saying?|Put yourself in situations where you're not comfortable|1000
+Wins|How many kids does Lebron have?|3|400
+Aura|What is Lebron's middle name?|Raymone|600
+Lying Ability|When did Lebron start the book?|A couple days ago|800
+Lying Ability|How many points did Lebron predict Kobe to score on the night Kobe went for 81?|70|1000
+Aura|Who's the nba's goat? (First and Last)|Lebron James|5000
+Aura|Smash or Pass Lebron?|Smash|1000

@@ -173,7 +173,7 @@ void Game::takeTurn()
             displayMenu();
             cin >> choice;
         }
-
+        cin.ignore();
         doPlayerAction(stoi(choice));
 
         if(choice != "5")
