@@ -12,30 +12,35 @@ class Player
         string getName();
         int getStatAtIndex(int index);
         int getMainStat();
+        vector<int> getStats();
         int getAge();
         int getPath();
         int getPosition();
         Advisor getAdvisor();
-        string getPlayerTitle(int index);
+        int getNum();
+        string getPlayerTitle();
+        int getConvertedMainStat(); // all stats get converted to main stat
 
         void setName(string name);
-
         bool setStatAtIndex(int index, int stat);
         void setMainStat(int main_stat);
+        void setStats(vector<int> stats);
         bool setAge(int age);
         bool setPath(int path);
         bool setPosition(int position);
         void setAdvisor(Advisor advisor);
+        bool setNum(int num);
 
         bool addStatAtIndex(int index, int added_stat);
         void addMainStat(int added_main_stat);
         void addStats(vector<int> stats);
         void move();
 
-        void displayProgress(int index);
-        void displayCharacter(int index);
-        void displayAdvisor(int index);
+        void displayProgress();
+        void displayCharacter();
+        void displayAdvisor();
         void printStats();
+        void printFinalStats();
         void printStatsWithArt(int imageNum);
 
     private:
@@ -44,6 +49,7 @@ class Player
         Advisor _advisor;
         vector<int> _stats;
         int _main_stat;
+        int _num;
 
         // Board stuff
         int _path;

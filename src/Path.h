@@ -11,6 +11,7 @@ class Path
         void displayTile(int pos, vector<int> on_tile, int width);
         Tile getTileAtPos(int pos);
         string getName();
+        int getSize();
         bool getStartAdvisor();
         int getStartMainStat();
         vector<int> getStartStats();
@@ -18,7 +19,6 @@ class Path
         string getDescriptionDisplay();
     
     private:
-        static const int _BOARD_SIZE = 52;
         string _name;
         int _size;
         bool _start_with_advisor;
@@ -26,7 +26,7 @@ class Path
         vector<int> _start_stats;
         int _start_main_stat;
 
-        Tile _tiles[_BOARD_SIZE];
+        vector<Tile> _tiles;
         vector <Event> _events;
 
         void initializeTiles();

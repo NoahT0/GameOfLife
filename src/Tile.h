@@ -5,11 +5,13 @@
 #include "Helper.h"
 
 class Path;
-Player advisorSelect(Player player, int player_index);
+Player advisorSelect(Player player);
 vector<Advisor> getAdvisors();
 int findAdvisorByName(vector <Advisor> advisors, string name);
-vector<Player> pathSelect(vector<Player> players, vector<string> path_description);
-void displayPathOptions(Player player, int index, vector<string> path_descriptions);
+void printAdvisorProfile(Advisor advisor);
+vector<Player> pathSelect(vector<Player> players, vector<string> path_description, vector<int> sizes);
+Player playerPathSelect(Player player, vector<string> path_description, vector<int> sizes);
+void displayPathOptions(Player player, vector<string> path_descriptions);
 
 struct Event
 {
@@ -49,8 +51,9 @@ class Tile
         Player moveBack(Player player);
         Player moveToPrevious(Player player, int roll);
         Player extraTurn(Player player);
-        Player switchAdvisor(Player player, int turn);
+        Player switchAdvisor(Player player);
         Player doRiddle(Player player);
+        Player switchPath(Player player, string path_name, vector<string> path_description, vector<int> sizes);
         
         Event getRandomEvent(vector<Event> events);
         vector<string> getAllRiddles();

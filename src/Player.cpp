@@ -5,6 +5,7 @@
 
 vector<string> getStatNames();
 string getMainStatName();
+void printAdvisorProfile(Advisor advisor);
 
 Player::Player()
 {
@@ -18,6 +19,7 @@ Player::Player()
 Player::Player(string name, vector<int> stats)
 {
     _name = name;
+    _num = 1;
     _age = 1;
     _path = 0;
     _position = 0;
@@ -31,21 +33,6 @@ string Player::getName()
 {
     return _name;
 }
-
-// int Player::getStrength()
-// {
-//     return _strength;
-// }
-
-// int Player::getStamina()
-// {
-//     return _stamina;
-// }
-
-// int Player::getWisdom()
-// {
-//     return _wisdom;
-// }
 
 int Player::getStatAtIndex(int index)
 {
@@ -61,7 +48,10 @@ int Player::getMainStat()
 {
     return _main_stat;
 }
-
+vector<int> Player::getStats()
+{
+    return _stats;
+}
 int Player::getPath()
 {
     return _path;
@@ -74,45 +64,29 @@ Advisor Player::getAdvisor()
 {
     return _advisor;
 }
-string Player::getPlayerTitle(int index)
+int Player::getNum()
 {
-    return "Player " + to_string(index+1) + ", " + _name;
+    return _num;
 }
+string Player::getPlayerTitle()
+{
+    return "Player " + to_string(_num) + ", " + _name;
+}
+int Player::getConvertedMainStat()
+{   
+    int total_main = _main_stat;
+    for(int i = 0; i < _stats.size(); i++)
+    {
+        total_main += 10 * _stats[i];   // 100 normal stats equal 1000 main stats
+    }
+
+    return total_main;
+}
+
 void Player::setName(string name)
 {
     _name = name;
 }
-// bool Player::setStrength(int strength)
-// {
-    
-//     _strength = strength;
-//     if(_strength <100)
-//     {
-//         _strength = 100;
-//         return false;
-//     }
-//     return true;
-// }
-// bool Player::setStamina(int stamina)
-// {
-//     _stamina = stamina;
-//     if(_stamina < 100)
-//     {
-//         _stamina = 100;
-//         return false;
-//     }
-//     return true;
-// }
-// bool Player::setWisdom(int wisdom)
-// {
-//     _wisdom = wisdom;
-//     if(_wisdom < 100)
-//     {
-//         _wisdom = 100;
-//         return false;
-//     }
-//     return true;
-// }
 bool Player::setStatAtIndex(int index, int stat)
 {
     _stats[index] = stat;
@@ -127,6 +101,10 @@ bool Player::setStatAtIndex(int index, int stat)
 void Player::setMainStat(int main_stat)
 {
     _main_stat = main_stat;
+}
+void Player::setStats(vector<int> stats)
+{
+    _stats = stats;
 }
 bool Player::setAge(int age)
 {
@@ -151,6 +129,10 @@ bool Player::setPath(int path)
 }
 bool Player::setPosition(int position)
 {
+    if(position < 0)
+    {
+        return false;
+    }
     _position = position;
     return true;
 }
@@ -158,7 +140,16 @@ void Player::setAdvisor(Advisor advisor)
 {
     _advisor = advisor;
 }
+bool Player::setNum(int num)
+{
+    if(num <= 0)
+    {
+        return false;
+    }
 
+    _num = num;
+    return true;
+}
 bool Player::addStatAtIndex(int index, int added_stat)
 {
     return setStatAtIndex(index,_stats[index] + added_stat);
@@ -261,16 +252,18 @@ void Player::printStats()
     {
         cout << stat_names[i] << ": " << _stats[i] << endl;
     }
-    // cout << "Strength: " << _strength << endl;
-    // cout << "Stamina: " << _stamina << endl;
-    // cout << "Wisdom: " << _wisdom << endl;
     cout << getMainStatName() << ": " << _main_stat << endl;
     
 }
-
-void Player::displayProgress(int index)
+void Player::printFinalStats()
 {
-    cout << getPlayerTitle(index) << " has " << _main_stat << " " << getMainStatName() << endl;
+    cout << "Player " << _num << " ";
+    printStats();
+    cout << "Converted " << getMainStatName() << ": " << getConvertedMainStat() << endl;
+}
+void Player::displayProgress()
+{
+    cout << getPlayerTitle() << " has " << _main_stat << " " << getMainStatName() << endl;
 
     vector<string> stat_names = getStatNames();
     assert(stat_names.size() == _stats.size());
@@ -282,15 +275,18 @@ void Player::displayProgress(int index)
 
     cout << "and " << _stats[_stats.size()-1] << " " << stat_names[stat_names.size()-1] << "." << endl;
     
-    // cout << _stamina << " stamina," << endl;
-    // cout << _strength << " strength," << endl;
-    // cout << "and " << _wisdom << " wisdom." << endl;
 }
-void Player::displayCharacter(int index)
+void Player::displayCharacter()
 {
-    cout << getPlayerTitle(index) << " is " << _age << endl;
+    cout << getPlayerTitle() << " is " << _age << endl;
 }
-void Player::displayAdvisor(int index)
+void Player::displayAdvisor()
 {
-    cout << getPlayerTitle(index) << " advisor's is " << _advisor.getName() << endl;
+    if(_advisor.name.length() == 0)
+    {
+        cout << "No current advisor." << endl;
+        return;
+    }
+    cout << getPlayerTitle() << "'s current advisor: " << endl;
+    printAdvisorProfile(_advisor);
 }

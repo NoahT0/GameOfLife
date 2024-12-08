@@ -12,21 +12,20 @@ Game::Game(string theme)
     vector<Player> players = characterSelect();
     _board = Board(players);
     
-    vector<Path> paths = _board.getPaths();
-    vector<string> path_names(paths.size());
-    for(int i = 0; i < path_names.size(); i++)
-    {
-        path_names[i] = paths[i].getDescriptionDisplay();
-    }
+    vector<string> path_descriptions = _board.getPathDescriptions();
+    vector<int> path_sizes = _board.getPathSizes();
+    // const int num_paths = _board.getPaths().size();
+    // string descriptions[num_paths];
+    // int sizes[num_paths];
     
-    players = pathSelect(players, path_names);
+    players = pathSelect(players, path_descriptions, path_sizes);
     players = initializePlayersOnPath(players);
     
     _board.setPlayers(players);
     _board.displayBoard();
     _turn = 0;
 
-    _extra_turn[0] = false;
+    _extra_turn = false;
     
 }
 vector<Player> Game::characterSelect()
@@ -57,6 +56,7 @@ vector<Player> Game::characterSelect()
             else
             {
                 // Add selected character to vector of players and update remaining characters that can be chosen
+                possible_players[characterIndex].setNum(count);
                 players.push_back(possible_players[characterIndex]);
                 cout << endl;
                 cout << "Player " << count << " selected " << possible_players[characterIndex].getName() << "!\n\n\n";
@@ -103,8 +103,6 @@ vector<Player> Game::getPossiblePlayers()
     while(getline(character_input, line))
     {
         // playerName|age|strength|stamina|wisdom|pridePoints
-        //string arr[6];
-       // split(line,'|',arr,6);
         vector<string> traits = vectorSplit(line, '|');
 
         // Get the stats of character(strength,stamina,wisdom)
@@ -143,7 +141,7 @@ vector<Player> Game::initializePlayersOnPath(vector<Player> players)
         // If path starts with advisor then select advisor
         if(path.getStartAdvisor())
         {
-            players[i] = advisorSelect(players[i], i);
+            players[i] = advisorSelect(players[i]);
         }
         else
         {
@@ -210,16 +208,16 @@ void Game::doPlayerAction(int choice)
     switch(choice)
     {
         case 1:
-            player.displayProgress(_turn);
+            player.displayProgress();
             break;
         case 2:
-            player.displayCharacter(_turn);
+            player.displayCharacter();
             break;
         case 3:
             _board.displayBoard();
             break;
         case 4:
-            player.displayAdvisor(_turn);
+            player.displayAdvisor();
             break;
         case 5:
             movePlayer();
@@ -235,7 +233,7 @@ void Game::movePlayer()
     // Generate random numer 1-6 for roll
     cout << "Spinning..." << endl;
     int roll = rand() % 6 + 1;
-    cout << player.getPlayerTitle(_turn) << " rolled a " << roll << "." << endl;
+    cout << player.getPlayerTitle() << " rolled a " << roll << "." << endl;
     cout << endl;
 
     // Move player and display updated board
@@ -248,9 +246,9 @@ void Game::movePlayer()
 
     _board.setPlayerAtIndex(_turn, player); 
 
-    if(_extra_turn[0])
+    if(_extra_turn)
     {
-        _extra_turn[0] = false;
+        _extra_turn = false;
         _turn--;
     }
 }
@@ -264,7 +262,7 @@ void Game::displayMenu()
     cout << "4. Review your Advisor (4)" << endl;
     cout << "5. Move Forward (5)" << endl;
     cout << endl;
-    cout << player.getPlayerTitle(_turn) << " please choose an option using the corresponding number:" << endl;
+    cout << player.getPlayerTitle() << " please choose an option using the corresponding number:" << endl;
 }
 int Game::getNumPlayers()
 {
@@ -296,12 +294,23 @@ Player Game::applyTileEffect(int roll)
     }
     else if(effect == "extra")
     {
-        _extra_turn[0] = true;
+        _extra_turn = true;
         player = tile.extraTurn(player);
     }
     else if(effect == "advisor")
     {
-        player = tile.switchAdvisor(player, _turn);
+        player = tile.switchAdvisor(player);
+    }
+    else if(effect == "switch")
+    {
+        vector<string> board_descriptions = _board.getPathDescriptions();
+        // cout << "path description size: " << board_descriptions.size() << endl;
+        // cout << "player index: " << player.getNum() << endl;
+        string path_name = _board.getPathAtPlayer(player.getNum()-1).getName();
+        //cout << "path name: " << path_name << endl;
+        vector<int> path_sizes = _board.getPathSizes();
+        //cout << "path size size: " << path_sizes.size() << endl;
+        player = tile.switchPath(player, path_name, board_descriptions, path_sizes);
     }
     else if(effect == "riddle")
     {
@@ -315,21 +324,50 @@ bool Game::isFinished()
 {
     return _board.areAllPlayersFinished();
 }
-
-/*
-Loops through the player vector and converts all leadership points to pride points and finds the player with most 
-pride points. returns the player with the most.
-
-*/
-
-Player Game::calculateWinner()
+// Ex:
+// {6,2,9,8,7} {6,9,2,8,7} {6,9,8,2,7} {6,9,8,7,2}
+// {6,9,8,7,2} {9,6,8,7,2} {9,8,6,7,2} {9,8,7,6,2} 
+vector<Player> Game::bubbleSortPlayers()
 {
-    return Player();
+    vector<Player> players = _board.getPlayers();
+    
+    int size = players.size();
+    bool isSwapped = false;
+
+    for(int i = 0; i < size - 1; i++)
+    {
+        isSwapped = false;
+
+        for(int j = 0; j < size - i - 1; j++)
+        {
+            int current = players[j].getConvertedMainStat();
+            int next = players[j + 1].getConvertedMainStat();
+
+            // If next is greater than current swap so greatest is at beginning
+            if(current < next)
+            {
+                swap(players[j], players[j+1]);
+                isSwapped = true;
+            }
+        }
+
+        if(!isSwapped)
+        {
+            break;
+        }
+    }
+    return players;
 }
-/*
-Gets winner from calculateWinner method and displays the winner's stats followed by the other player's stats
-*/
+
+// Gets the sorted players and then displays them in order
 void Game::displayWinner()
 {
-    Player winner = calculateWinner();
+    vector<Player> players = bubbleSortPlayers();
+    cout << "Winner: " << players[0].getName() << endl;
+    for(int i = 0; i < players.size(); i++)
+    {
+        cout << "Place: " << (i+1) << endl;
+        players[i].printFinalStats();
+        cout << endl;
+    }
 }

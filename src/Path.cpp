@@ -6,12 +6,9 @@
 
 Path::Path(string name, vector<int> start_stats, bool start_advisor, int size)
 {
-
-    // string red = "\033[4;2;230;10;10m";
-    // cout << "Red: " << red << endl;
-    // cout << "Blue: " << BLUE << endl;
     _name = name;
     _size = size;
+    _tiles = vector<Tile>(size);
     
     _start_main_stat = start_stats[start_stats.size()-1];
     start_stats.pop_back(); // Remove the main stat from start_stats
@@ -151,7 +148,10 @@ int Path::getGreenCount()
     ifstream path_file = iterateToStringInStream("paths.txt", {_name, "Path Initialization:"});
 
     string line;
+    getline(path_file,line);    // Increment past tile count
+    
     getline(path_file,line);
+    assert(validateInt(line)); // Make sure there is a number for the path size and green count otherwise there will be an errror
     int green_count = stoi(line);
 
     path_file.close();
@@ -370,7 +370,6 @@ void Path::displayTile(int pos, vector<int> on_tile, int width)
 {
     // Template for displaying a tile: <line filler space> <color start> |<player symbol or blank space>| <reset color> <line filler space> <endl>
     // Determine color to display
-    //string color = colorFromCharacter(_tiles[pos].getColor());
     string color = _tiles[pos].getColor().color_value;
 
     if (on_tile.size()>0)
@@ -379,7 +378,6 @@ void Path::displayTile(int pos, vector<int> on_tile, int width)
         string inner = to_string(on_tile[0] + 1);
         for(int i = 1; i<on_tile.size(); i++)
         {
-            //cout << ", " << (onTile[i]+1);
             inner += "&" + to_string(on_tile[i]+1);
         }
         cout << setw(width) << left << inner;
@@ -402,7 +400,10 @@ string Path::getName()
 {
     return _name;
 }
-
+int Path::getSize()
+{
+    return _size;
+}
 bool Path::getStartAdvisor()
 {
     return _start_with_advisor;

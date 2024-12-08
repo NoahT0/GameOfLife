@@ -3,6 +3,7 @@ Name
 stat1|stat2|stat3|etc|pride points
 start with advisor, true or false (1 or 0)
 Path Initialization:
+tile count
 greencount
 Tiles and Percentages:
 tile_name1|tile_name2|tile_name3|etc.
@@ -16,6 +17,7 @@ Cub Training
 500|500|1000|-5000
 1
 Path Initialization:
+52
 30
 Tiles and Percentages:
 graveyard|hyenas|oasis|challenge|counseling
@@ -28,6 +30,7 @@ Straight to the Pride Lands
 200|200|200|5000
 0
 Path Initialization:
+52
 20
 Tiles and Percentages:
 graveyard|hyenas|oasis|challenge|counseling
@@ -40,6 +43,7 @@ Test1
 2000|2000|2000|23400
 1
 Path Initialization:
+52
 0
 Tiles and Percentages:
 graveyard|hyenas|oasis|challenge|counseling
@@ -53,6 +57,7 @@ Lebron
 2000|2000|2000|23400
 0
 Path Initialization:
+95
 0
 Tiles and Percentages:
 challenge|hyenas
@@ -65,6 +70,7 @@ GrassPlusOne
 2000|2000|2000|23400
 0
 Path Initialization:
+52
 49
 Tiles and Percentages:
 graveyard|challenge

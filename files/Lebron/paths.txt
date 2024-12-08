@@ -1,8 +1,9 @@
 Member Variables:
 Name
-stat1|stat2|stat3|etc|pride points
+stat1|stat2|stat3|etc|main stat
 start with advisor, true or false (1 or 0)
 Path Initialization:
+tilecount
 greencount
 Tiles and Percentages:
 tile_name1|tile_name2|tile_name3|etc.
@@ -16,11 +17,12 @@ Super Senior
 1000|500|200|1000|-5000
 1
 Path Initialization:
+52
 10
 Tiles and Percentages:
-TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
-20|20|25|20|15
-20|20|15|30|15
+TornACL|LeOver|FreeAgentSign|LeRiddle|counseling|Switch
+20|20|25|20|15|10
+20|20|15|30|15|10
 Random Events:
 Groin|Fatigue|Diddy
 
@@ -28,6 +30,7 @@ College
 500|200|500|500|5000
 1
 Path Initialization:
+52
 20
 Tiles and Percentages:
 TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
@@ -40,6 +43,7 @@ Straight to the NBA
 300|2000|2000|500|233400
 0
 Path Initialization:
+42
 30
 Tiles and Percentages:
 LeOver|LeRiddle|counseling
@@ -53,10 +57,11 @@ Shanghai Sharks
 20000|20000|500|10000|-5000
 1
 Path Initialization:
+52
 0
 Tiles and Percentages:
-TornACL|LeRiddle
-10|1
-1|10
+Switch|TornACL|LeRiddle
+100|1|1
+100|1|1
 Random Events:
 Groin|CaughtLying|Taco|Hennesy

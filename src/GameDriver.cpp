@@ -103,7 +103,5 @@ int main()
     }
     game.displayWinner();
 
-    // Specify length of path in text file
-    // advisor struct instead
     return 0;
 }

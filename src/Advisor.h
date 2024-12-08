@@ -4,27 +4,10 @@
 #include <iostream>
 
 using namespace std;
-
-class Advisor
+struct Advisor
 {
-    public:
-        Advisor();
-        Advisor(string name, string special_ability, int num);
-
-        string getName();
-        string getSpecialAbility();
-        int getNum();
-
-        void setName(string name);
-        void setSpecialAbility(string special_ability);
-        void setNum(int num);
-
-        void printProfile();
-    private:
-        string _name;
-        string _special_ability;
-        int _num;
-    
+    string name;
+    string special_ability;
 };
 
 #endif

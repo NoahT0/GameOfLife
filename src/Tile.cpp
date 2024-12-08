@@ -6,7 +6,7 @@ int findAdvisorByName(vector <Advisor> advisors, string name)
 {
     for(int i = 0; i<advisors.size(); i++)
     {
-        if(toUpperString(advisors[i].getName()) == toUpperString(name))
+        if(toUpperString(advisors[i].name) == toUpperString(name))
         {
             return i;
         }
@@ -21,20 +21,18 @@ vector<Advisor> getAdvisors()
     ifstream advisor_file = getInputStream("advisors.txt");
 
     string line;
-    int count = 1;
     while(getline(advisor_file,line))
     {
         string arr[2];
         split(line, '|',arr,2);
-        Advisor advisor(arr[0], arr[1], count);
+        Advisor advisor = {arr[0], arr[1]};
 
         advisors.push_back(advisor);
-        count++;
     }
     advisor_file.close();
     return advisors;
 }
-Player advisorSelect(Player player, int player_index)
+Player advisorSelect(Player player)
 {
     int advisor_index = -1;
     while(advisor_index<0)
@@ -43,10 +41,11 @@ Player advisorSelect(Player player, int player_index)
         vector<Advisor> advisors = getAdvisors();
         for(int i = 0; i<advisors.size(); i++)
         {
-            advisors[i].printProfile();
+            //advisors[i].printProfile();
+            printAdvisorProfile(advisors[i]);
         }
         cout << endl;
-        cout << player.getPlayerTitle(player_index) << ", enter advisor name:" << endl;
+        cout << player.getPlayerTitle() << ", enter advisor name:" << endl;
         string name;
         getline(cin, name);
         advisor_index = findAdvisorByName(advisors,name);
@@ -59,53 +58,66 @@ Player advisorSelect(Player player, int player_index)
         else
         {
             player.setAdvisor(advisors[advisor_index]);
-            cout << player.getPlayerTitle(player_index) << " chose " << advisors[advisor_index].getName() << "!" << endl;
+            cout << player.getPlayerTitle() << " chose " << advisors[advisor_index].name << "!" << endl;
         }
         cout << endl;
     }
     return player;
 }
-
-vector<Player> pathSelect(vector<Player> players, vector<string> path_description)
+void printAdvisorProfile(Advisor advisor)
 {
-    //cout << "Size: " << paths.size() << endl;
-    for(int i = 0; i<players.size(); i++)
+    cout << "Name: " << advisor.name << endl;
+    cout << "Special ability: " << advisor.special_ability << endl;
+}
+vector<Player> pathSelect(vector<Player> players, vector<string> path_description, vector<int> sizes)
+{
+    for(int i = 0; i < players.size(); i++)
     {
-        string choice;
-        bool is_path_picked = false;
-
-        // Loop until player picks a valid path
-        while(!is_path_picked)
-        {
-            
-            // Display path options
-            displayPathOptions(players[i], i, path_description);
-            
-            cin >> choice;
-            // First check if user entered an int then make sure it is a valid choice
-            if(!validateInt(choice) || stoi(choice) < 1 || stoi(choice) > path_description.size())
-            {
-                cout << "Invalid path. Enter a number between 1 and " << path_description.size() << endl;
-            }
-            else
-            {
-                players[i].setPath(stoi(choice)-1);
-                
-                int new_line_idx = getCharIndex(path_description[stoi(choice)-1], '\n');
-                string name = path_description[stoi(choice)-1].substr(0,new_line_idx);
-                cout << players[i].getPlayerTitle(i) << " chose " << name << "!" << endl;
-                is_path_picked = true;
-                
-            }
-            cout << endl;
-        }
-        
+        players[i] = playerPathSelect(players[i], path_description, sizes);
     }
-    cin.ignore();
     return players;
 }
+Player playerPathSelect(Player player, vector<string> path_description, vector<int> sizes)
+{
+    string choice;
+    bool is_path_picked = false;
 
-void displayPathOptions(Player player, int index, vector<string> path_descriptions)
+    // Loop until player picks a valid path
+    while(!is_path_picked)
+    {
+        // Display path options
+        displayPathOptions(player, path_description);
+        
+        cin >> choice;
+        // First check if user entered an int then make sure it is a valid choice
+        if(!validateInt(choice) || stoi(choice) < 1 || stoi(choice) > path_description.size())
+        {
+            cout << "Invalid path. Enter a number between 1 and " << path_description.size() << endl;
+        }
+        else
+        {
+            int choice_index = stoi(choice)-1;
+            player.setPath(choice_index);
+            
+            // For when player switches paths. If player switches to path where they are already past the final index of the new path
+            // Then set the position to the final index of the new path
+            if(player.getPosition() > sizes[choice_index]-1)
+            {
+                player.setPosition(sizes[choice_index] - 1);
+            }
+            
+            int new_line_idx = getCharIndex(path_description[choice_index], '\n'); // Extract name from description string
+            string name = path_description[choice_index].substr(0,new_line_idx);
+            cout << player.getPlayerTitle() << " chose " << name << "!" << endl;
+            is_path_picked = true;
+            
+        }
+        cout << endl;
+    }
+    cin.ignore();
+    return player;
+}
+void displayPathOptions(Player player, vector<string> path_descriptions)
 {
     cout << "Path options: " << endl;
     for(int i = 0; i < path_descriptions.size(); i++)
@@ -113,7 +125,7 @@ void displayPathOptions(Player player, int index, vector<string> path_descriptio
         cout << (i+1) << ". " << path_descriptions[i] << endl;
         cout << endl;
     }
-    cout << player.getPlayerTitle(index) << " enter path with corresponding number: " << endl;
+    cout << player.getPlayerTitle() << " enter path with corresponding number: " << endl;
 }
 
 Tile::Tile()
@@ -197,7 +209,7 @@ Player Tile::doRandom(Player player, vector<Event> events)
             cout << "Gain " << event.main_stat << " " << getMainStatName() << "!" << endl;
             player.addMainStat(event.main_stat);
         }
-        else if(player.getAdvisor().getName() == event.advisor_name)
+        else if(player.getAdvisor().name == event.advisor_name)
         {
             cout << event.advisor_name << " protects you!" << endl;
         }
@@ -238,24 +250,50 @@ Player Tile::extraTurn(Player player)
     
     return player;
 }
-Player Tile::switchAdvisor(Player player, int turn)
+Player Tile::switchAdvisor(Player player)
 {
     cout << getStatWinsAndLoss() << endl;
-    if(player.getAdvisor().getName() == "none")
+    // If players don't have adivsor they get to choose one
+    if(player.getAdvisor().name.length() == 0)
     {
-        player = advisorSelect(player,turn);
+        player = advisorSelect(player);
     }
     else
     {
+        // Print current advisor and prompt if they want to switch
         cout << "Your current advisor:" << endl;
-        player.getAdvisor().printProfile();
+        printAdvisorProfile(player.getAdvisor());
         cout << "Would you like to switch advisors? Yes (Y) or No (N)" << endl;
+
+        // If they choose 'Y' they are able to choose new advisor
         char choice;
         cin >> choice;
-        if(choice == 'Y')
+        if(toupper(choice) == 'Y')
         {
-            player = advisorSelect(player,turn);
+            cin.ignore();
+            player = advisorSelect(player);
         }
+        
+    }
+
+    return player;
+}
+Player Tile::switchPath(Player player, string path_name, vector<string> path_description, vector<int> sizes)
+{
+    cout << getStatWinsAndLoss() << endl;
+
+    cout << "Your current path:" << endl;
+    cout << path_name << endl;
+    cout << "Would you like to switch paths? Yes (Y) or No (N)" << endl;
+
+    // If they choose 'Y' they are able to choose new path
+    char choice;
+    cin >> choice;
+    if(toupper(choice) == 'Y')
+    {
+        cin.ignore();
+        
+        player = playerPathSelect(player, path_description, sizes);
     }
 
     return player;

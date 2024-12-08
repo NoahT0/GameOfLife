@@ -10,7 +10,6 @@ class Game
         int getNumPlayers();
         void takeTurn();
         bool isFinished();
-        Player calculateWinner();
         void displayWinner();
 
     private:
@@ -18,7 +17,6 @@ class Game
         void printPlayerStats(vector<Player> players);
         int findCharacterByName(vector<Player> players, string name);
         vector<Player> characterSelect();
-        //vector<Player> pathSelect(vector<Player> players, vector<Path> paths);
         
         void displayMenu();
         void doPlayerAction(int choice);
@@ -28,9 +26,11 @@ class Game
         vector<Player> initializePlayersOnPath(vector<Player> players);
         void updateTurn();
 
+        vector<Player> bubbleSortPlayers();
+
         Board _board;
         int _turn;
-        bool _extra_turn[1];
+        bool _extra_turn;
 };
 
 #endif

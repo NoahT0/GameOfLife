@@ -33,16 +33,25 @@ void Board::initializeBoard()
         
         if(set_new_path)
         {
+            // Get and set name
             name = line;
             getline(path_file,line);
 
             start_stats = vectorSplit(line, '|');
+            assert(start_stats.size() == num_of_stats+1);   // +1 for basic stats and additional main stat
+            
+            // Get and set advisor
             getline(path_file,line);
-            assert(start_stats.size() == num_of_stats+1);
-
+            assert(validateInt(line));
             start_advisor = stoi(line);
 
-            _paths.push_back(Path(name, vectorStringToInt(start_stats), start_advisor, _BOARD_SIZE));
+            // Get path size
+            getline(path_file,line);
+            getline(path_file,line);
+            assert(validateInt(line));
+            int path_size = stoi(line);
+
+            _paths.push_back(Path(name, vectorStringToInt(start_stats), start_advisor, path_size));
             set_new_path = false;
 
         }
@@ -147,11 +156,18 @@ int Board::getMaxWidthOfTile(int pos)
 
 void Board::displayTrack(int path)
 {
-    for (int i = 0; i < _BOARD_SIZE; i++)
+    Path path_obj = _paths[path];
+    for (int i = 0; i < path_obj.getSize(); i++)
     {
         vector<int> on_tile = playersOnTile(path, i);
         int width = getMaxWidthOfTile(i);
         _paths[path].displayTile(i,on_tile, width);
+
+        // Manually break lines otherwise weird console output color
+        if((i+1) % _MAX_TILES_PER_LINE == 0)
+        {
+            cout << endl;
+        }
     }
     cout << endl;
 }
@@ -167,17 +183,19 @@ void Board::displayBoard()
 }
 void Board::setPlayerPosition(int player_index, int pos)
 {
-    pos = clamp(pos, 0, _BOARD_SIZE-1);
+    int path_size = getPathAtPlayer(player_index).getSize();
+    pos = clamp(pos, 0, path_size-1);
     _players[player_index].setPosition(pos);
 }
 bool Board::movePlayer(int player_index)
 {
+    int path_size = getPathAtPlayer(player_index).getSize();
     // Increment player position
-    if(_players[player_index].getPosition() < _BOARD_SIZE - 1)
+    if(_players[player_index].getPosition() < path_size - 1)
     {
         _players[player_index].move();
     }
-    if (_players[player_index].getPosition() == _BOARD_SIZE - 1)
+    if (_players[player_index].getPosition() == path_size - 1)
     {
         // Player reached last tile
         return true;
@@ -186,6 +204,7 @@ bool Board::movePlayer(int player_index)
 }
 bool Board::movePlayer(int player_index, int amount)
 {
+    int path_size = getPathAtPlayer(player_index).getSize();
     if(amount < 0)
     {
         amount = 0;
@@ -193,7 +212,7 @@ bool Board::movePlayer(int player_index, int amount)
     // Move certain forward amount of times or until player reaches the end
     for(int i = 0; i<amount && !movePlayer(player_index); i++);
 
-    return (_players[player_index].getPosition() == _BOARD_SIZE - 1);
+    return (_players[player_index].getPosition() == path_size - 1);
 }
 int Board::getPlayerPosition(int player_index)
 {
@@ -224,12 +243,14 @@ void Board::setPlayerAtIndex(int index, Player player)
 Tile Board::getTileAtPlayer(int index)
 {
     Player player = _players[index];
-    return _paths[player.getPath()].getTileAtPos(player.getPosition());
+    Path path = getPathAtPlayer(index);
+    return path.getTileAtPos(player.getPosition());
 }
 
 bool Board::isPlayerFinshed(int index)
 {
-    return (_players[index].getPosition() == _BOARD_SIZE-1);
+    int path_size = getPathAtPlayer(index).getSize();
+    return (_players[index].getPosition() == path_size-1);
 }
 
 bool Board::areAllPlayersFinished()
@@ -245,7 +266,33 @@ bool Board::areAllPlayersFinished()
     return true;
 }
 
-int Board::getBoardSize()
+Path Board::getPathAtPlayer(int player_index)
 {
-    return _BOARD_SIZE;
+    bool inRange = (player_index >= 0 && player_index < _players.size());
+
+    assert(inRange);    // Make sure valid index is passed in
+    Player player = _players[player_index];
+    return _paths[player.getPath()];
+}
+
+vector<string> Board::getPathDescriptions()
+{
+    vector<string> path_names(_paths.size());
+    for(int i = 0; i < path_names.size(); i++)
+    {
+        path_names[i] = _paths[i].getDescriptionDisplay();
+    }
+
+    return path_names;
+}
+
+vector<int> Board::getPathSizes()
+{
+    vector<int> path_sizes;
+    for(int i = 0; i < _paths.size(); i++)
+    {
+        path_sizes.push_back(_paths[i].getSize());
+    }
+
+    return path_sizes;
 }

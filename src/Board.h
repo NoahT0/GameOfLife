@@ -8,7 +8,8 @@
 class Board
 {
     private:
-        static const int _BOARD_SIZE = 52;
+        // Make smaller/bigger depending on how wide console is
+        static const int _MAX_TILES_PER_LINE = 53; // Number of tiles before the path goes to next line. If path naturally goes to next line it looks funny
         vector <Path> _paths;
         
         static const int _MAX_PLAYERS = 5;
@@ -33,11 +34,14 @@ class Board
         bool movePlayer(int player_index, int amount);
         int getPlayerPosition(int player_index);
         vector<Player> getPlayers();
+        vector<string> getPathDescriptions();
+        vector<int> getPathSizes();
         Player getPlayerAtIndex(int index);
         void setPlayers(vector<Player> players);
         void setPlayerAtIndex(int index, Player player);
         Tile getTileAtPlayer(int index);
-        int getBoardSize();
+        //int getBoardSize();
+        Path getPathAtPlayer(int player_index);
         vector <Path> getPaths();
 
         bool isPlayerFinshed(int index);

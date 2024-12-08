@@ -43,3 +43,7 @@ Welcome to LeHelp. Choose a mentor to help you. You can switch too.
 Pink|advisor
 300|300|300|300
 
+Switch
+It's 2010 LEBRON! Time for a decision!!! Are you taking your talents to South Beach or elsewhere?
+Yellow|switch
+0|500|500|0
