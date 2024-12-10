@@ -4,20 +4,18 @@
 
 Game::Game(string theme)
 {
-    // Set theme
+    // Write chosen theme to file (Used for path file paths)
     ofstream theme_choice("../files/theme_choice.txt");
     theme_choice << theme << endl;
     theme_choice.close();
 
+    // Have players select a character
     vector<Player> players = characterSelect();
+
+    // Initialize board and have players select a path
     _board = Board(players);
-    
     vector<string> path_descriptions = _board.getPathDescriptions();
     vector<int> path_sizes = _board.getPathSizes();
-    // const int num_paths = _board.getPaths().size();
-    // string descriptions[num_paths];
-    // int sizes[num_paths];
-    
     players = pathSelect(players, path_descriptions, path_sizes);
     players = initializePlayersOnPath(players);
     
@@ -26,12 +24,12 @@ Game::Game(string theme)
     _turn = 0;
 
     _extra_turn = false;
-    
 }
 vector<Player> Game::characterSelect()
 {
     vector<Player> possible_players = getPossiblePlayers();
     vector<Player> players;
+
     string name;
     int count = 1;
     while(possible_players.size()>0 && name != "X")
@@ -47,6 +45,7 @@ vector<Player> Game::characterSelect()
 
         if(name != "X")
         {
+            // Search for chosen character. If invalid loop again
             int characterIndex = findCharacterByName(possible_players, name);
 
             if(characterIndex<0)
@@ -55,21 +54,29 @@ vector<Player> Game::characterSelect()
             }
             else
             {
-                // Add selected character to vector of players and update remaining characters that can be chosen
                 possible_players[characterIndex].setNum(count);
+                // Add selected character to vector of players and update remaining characters that can be chosen
                 players.push_back(possible_players[characterIndex]);
                 cout << endl;
                 cout << "Player " << count << " selected " << possible_players[characterIndex].getName() << "!\n\n\n";
                 count ++;
 
+                // Remove chosen character from vector
                 possible_players.erase(possible_players.begin()+characterIndex);
             }
+        }
+        else if(players.size() == 0)
+        {
+            // Can't play the game if no players were selected
+            cout << "Must have at least one player." << "\n\n\n";
+            name = "";
         }
     }
     cout << endl;
     return players;
 }
 
+// Returns index of player that has particular name
 int Game::findCharacterByName(vector <Player> players, string name)
 {
     for(int i = 0; i<players.size(); i++)
@@ -81,12 +88,13 @@ int Game::findCharacterByName(vector <Player> players, string name)
     }
     return -1;
 }
+
 void Game::printPlayerStats(vector<Player> players)
 {
     for(int i = 0; i<players.size(); i++)
     {
         players[i].printStats();
-        cout << endl;
+        cout << endl;   // Extra line for spacing
     }
 }
 vector<Player> Game::getPossiblePlayers()
@@ -94,7 +102,6 @@ vector<Player> Game::getPossiblePlayers()
     string line;
     vector<Player> possible_players;
 
-    //ifstream character_input("Files/characters.txt");
     ifstream character_input = getInputStream("characters.txt");
 
     // Increment past description
@@ -102,24 +109,29 @@ vector<Player> Game::getPossiblePlayers()
 
     while(getline(character_input, line))
     {
-        // playerName|age|strength|stamina|wisdom|pridePoints
+        // playerName|age|stat1|stat2|stat3|...|main stat
         vector<string> traits = vectorSplit(line, '|');
 
-        // Get the stats of character(strength,stamina,wisdom)
+        // Get the stats of character ignoring name, age and the main stat
         vector<int> stats(traits.size()-3);
-        //cout << stats.size() << endl;
+
         for(int i = 0; i<stats.size(); i++)
         {
-            //cout << traits[i+2] << endl;
             int stat = stoi(traits[i + 2]); // +2 since the first element in traits is name and the second is age
             stats[i] = stat;
         }
 
+        // Initialize player with name and stats. Then set the age and main stat
         Player player(traits[0],stats);
+
+        assert(validateInt(traits[1])); // Ensure age is an int
+        assert(validateInt(traits[traits.size()-1]));   // Ensure main stat is an int
+
         player.setAge(stoi(traits[1]));
         player.setMainStat(stoi(traits[traits.size()-1]));
-        possible_players.push_back(player);
 
+        // Add new player to a vector
+        possible_players.push_back(player);
     }
     character_input.close();
 
@@ -131,9 +143,8 @@ vector<Player> Game::initializePlayersOnPath(vector<Player> players)
     vector <Path> paths = _board.getPaths();
     for(int i = 0; i<players.size(); i++)
     {
-
         Path path = paths[players[i].getPath()];
-        // Add path's starting leadership and pride points 
+        // Add path's starting stats and main stats 
         players[i].addMainStat(path.getStartMainStat());
         vector<int> stats = path.getStartStats();
         players[i].addStats(stats);
@@ -164,6 +175,7 @@ void Game::takeTurn()
         displayMenu();
         cin >> choice;
         
+        // Make sure player actually inputs an int and it is in range of the menu choices
         while(!validateInt(choice) || stoi(choice) > 5 || stoi(choice) < 1)
         {
             cout << "Invalid choice try again." << endl;
@@ -174,6 +186,7 @@ void Game::takeTurn()
         cin.ignore();
         doPlayerAction(stoi(choice));
 
+        // If player hasn't actually moved reset the menu
         if(choice != "5")
         {
             choice = "";
@@ -185,6 +198,7 @@ void Game::takeTurn()
 }
 void Game::updateTurn()
 {
+    // If all players are finished then don't update turn
     if(_board.areAllPlayersFinished())
     {
         return;
@@ -246,6 +260,7 @@ void Game::movePlayer()
 
     _board.setPlayerAtIndex(_turn, player); 
 
+    // If player gets extra turn from tile effect subtract 1 from turn to offset turn being incremented by 1
     if(_extra_turn)
     {
         _extra_turn = false;
@@ -271,15 +286,20 @@ int Game::getNumPlayers()
 // Change player stats based off what tile they landed on and also apply special effect to player
 Player Game::applyTileEffect(int roll)
 {
+    // Get current player and their path and tile they are on
     Player player = _board.getPlayerAtIndex(_turn);
     Tile tile = _board.getTileAtPlayer(_turn);
     Path player_path = _board.getPaths()[player.getPath()];
 
+    // Print out description of tile
     cout << tile.getDescription() << endl;
+
+    // Update player stats based off tile
     player = tile.changePlayerStats(player);
 
     string effect = tile.getAdditionalEffect();
 
+    // Call corresponding function based off effect
     if(effect == "random")
     {
         player = tile.doRandom(player, player_path.getEvents());
@@ -303,13 +323,10 @@ Player Game::applyTileEffect(int roll)
     }
     else if(effect == "switch")
     {
-        vector<string> board_descriptions = _board.getPathDescriptions();
-        // cout << "path description size: " << board_descriptions.size() << endl;
-        // cout << "player index: " << player.getNum() << endl;
         string path_name = _board.getPathAtPlayer(player.getNum()-1).getName();
-        //cout << "path name: " << path_name << endl;
+        vector<string> board_descriptions = _board.getPathDescriptions();
         vector<int> path_sizes = _board.getPathSizes();
-        //cout << "path size size: " << path_sizes.size() << endl;
+        
         player = tile.switchPath(player, path_name, board_descriptions, path_sizes);
     }
     else if(effect == "riddle")

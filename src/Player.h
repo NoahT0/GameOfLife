@@ -56,8 +56,6 @@ class Player
         int _position;
 
         bool iterateToImage(ifstream &input_file, int imageNum);
-        
-
 };
 
 #endif

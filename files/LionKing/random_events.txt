@@ -1,3 +1,4 @@
+Name|Description|Advisor|Main stat change
 Desert|Desert storm sweeps through the territory|Zazu|-500
 Fatigue|Fatigue from intense training with pride warriors|Sarabi|-200
 Night|Challenging night watch duty under pitch-black conditions|Nala|-400

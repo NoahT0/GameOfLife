@@ -90,6 +90,8 @@ void Player::setName(string name)
 bool Player::setStatAtIndex(int index, int stat)
 {
     _stats[index] = stat;
+
+    // Make sure stat is at least 100
     if(_stats[index] < 100)
     {
         _stats[index] = 100;
@@ -244,7 +246,10 @@ bool Player::iterateToImage(ifstream &input_file, int imageNum)
 }
 void Player::printStats()
 {   
+    // Print out name and age
     cout << _name << ", age " << _age << endl;
+
+    // Print out stats
     vector<string> stat_names = getStatNames();
     assert(stat_names.size() == _stats.size());
 
@@ -252,6 +257,8 @@ void Player::printStats()
     {
         cout << stat_names[i] << ": " << _stats[i] << endl;
     }
+
+    // Print main stat
     cout << getMainStatName() << ": " << _main_stat << endl;
     
 }
@@ -263,8 +270,10 @@ void Player::printFinalStats()
 }
 void Player::displayProgress()
 {
+    // Print main stat
     cout << getPlayerTitle() << " has " << _main_stat << " " << getMainStatName() << endl;
 
+    // Print basic stats
     vector<string> stat_names = getStatNames();
     assert(stat_names.size() == _stats.size());
 
@@ -280,6 +289,8 @@ void Player::displayCharacter()
 {
     cout << getPlayerTitle() << " is " << _age << endl;
 }
+
+// Print current advisor
 void Player::displayAdvisor()
 {
     if(_advisor.name.length() == 0)

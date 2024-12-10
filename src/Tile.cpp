@@ -201,20 +201,24 @@ Player Tile::doRandom(Player player, vector<Event> events)
     
     if(do_random == 0)
     {
+        // Get random event and print its description
         Event event = getRandomEvent(events);
-
         cout << event.description << endl;
+
         if(event.main_stat>0)
         {
+            // player gains main_stat from event
             cout << "Gain " << event.main_stat << " " << getMainStatName() << "!" << endl;
             player.addMainStat(event.main_stat);
         }
         else if(player.getAdvisor().name == event.advisor_name)
         {
+            // player has advisor that prevents losing main_stat
             cout << event.advisor_name << " protects you!" << endl;
         }
         else
         {
+            // player loses main_stat from event
             cout << "You lose " << (event.main_stat*-1) << " " << getMainStatName() << "." << endl;
             player.addMainStat(event.main_stat);
         }   
@@ -227,7 +231,7 @@ Player Tile::moveBack(Player player)
 {
     assert(validateInt(_extra_data));   // Make sure extra data is an int
 
-    // Move back 10
+    // Move back "_extra_data" amount
     cout << "Move back " + _extra_data +  " tiles. " + getStatWinsAndLoss() << endl;
 
     int newPos = player.getPosition()-stoi(_extra_data);
@@ -238,6 +242,7 @@ Player Tile::moveBack(Player player)
 }
 Player Tile::moveToPrevious(Player player, int roll)
 {
+    // Move back by the previous roll amount
     cout << "Return to previous position. " + getStatWinsAndLoss() << endl;
     int newPos = player.getPosition()-roll;
     player.setPosition(newPos);
@@ -282,6 +287,7 @@ Player Tile::switchPath(Player player, string path_name, vector<string> path_des
 {
     cout << getStatWinsAndLoss() << endl;
 
+    // Print current path and prompt if player wants to switch
     cout << "Your current path:" << endl;
     cout << path_name << endl;
     cout << "Would you like to switch paths? Yes (Y) or No (N)" << endl;
@@ -325,7 +331,7 @@ Player Tile::doRiddle(Player player)
     if(toUpperString(answer) == toUpperString(correct_answer))
     {
         cout << "You answered correct!" << endl;
-        player.addStatAtIndex(index, boost);  // CHANGE LATER
+        player.addStatAtIndex(index, boost);
     }
     else
     {
@@ -408,11 +414,14 @@ string Tile::getStatWinsAndLoss()
     }
 
     // Create string based off the stat names that are changing.
+    // string in form: Lose 500: stat1, Receive 600: stat2, stat3. etc
     string result;
     for(int i = 0; i < all_names.size(); i++)
     {
         int num = all_stats[i];
-
+        
+        // If all_stats is positive than start string with Receive else start with Lose
+        // Then add the amount player is losing or adding
         if(num < 0)
         {
             result += "Lose " + to_string(num * -1) + " ";
@@ -423,15 +432,20 @@ string Tile::getStatWinsAndLoss()
         }
 
         int size = all_names[i].size();
+
+        // If only one stat is being changed by particular value add that name followed by a period.
         if(size == 1)
         {
             result += all_names[i][0] + ". ";
         }
         else
         {
+            // size - 1 so and can be put before last element
             for(int j = 0; j < size-1; j++)
             {
                 result += all_names[i][j];
+
+                // No comma before the and
                 if(j < size - 2)
                 {
                     result += ",";
@@ -440,6 +454,7 @@ string Tile::getStatWinsAndLoss()
                 
             }
 
+            // add last element to result with and before
             result += "and " + all_names[i][size-1] + ". ";
         }
         

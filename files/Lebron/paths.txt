@@ -51,7 +51,7 @@ LeOver|LeRiddle|counseling
 0|0|1
 1|0|0
 Random Events:
-Groin|CaughtLying|Diddy|Hennesy|Lyrics
+Groin|CaughtLying|Diddy|Hennesy|Lyrics|Taco|Three
 
 Shanghai Sharks
 20000|20000|500|10000|-5000

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cassert>
 
+// Get the names of the different themes
 vector<string> getOptionNames()
 {
     ifstream theme_file("../files/theme_choices.txt");
@@ -27,7 +28,7 @@ vector<string> getOptionNames()
 
     return option_names;
 }
-
+// Get the folder names for different themes
 vector<string> getOptionFolders()
 {
     ifstream theme_file("../files/theme_choices.txt");
@@ -53,6 +54,8 @@ vector<string> getOptionFolders()
 
     return options;
 }
+
+// Print the theme options
 void displayOptions(vector<string> options_names)
 {
     cout << "Theme options: " << endl;
@@ -72,6 +75,9 @@ string theme_select()
     string choice_str;
 
     getline(cin, choice_str);
+
+    // Make sure user inputs an integer that is in range of theme choices
+    // If not then prompt user for a new number
     while(!validateInt(choice_str) || stoi(choice_str) < 1 || stoi(choice_str) > option_names.size())
     {
         cout << "Invalid choice. Select a number between 1 and " << option_names.size() << endl;
@@ -82,7 +88,7 @@ string theme_select()
         getline(cin, choice_str);
     }
     cout << endl;
-
+    // Print chosen theme name and return the file name
     int choice = stoi(choice_str);
     cout << option_names[choice - 1] << " theme chose!" << endl << endl;
 

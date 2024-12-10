@@ -13,19 +13,23 @@ class Game
         void displayWinner();
 
     private:
+        // Finalize player initialization after they select their path
+        vector<Player> initializePlayersOnPath(vector<Player> players);
+
+        // Character select functions
         vector<Player> getPossiblePlayers();
         void printPlayerStats(vector<Player> players);
         int findCharacterByName(vector<Player> players, string name);
         vector<Player> characterSelect();
         
+        // Functions for a player's turn
         void displayMenu();
         void doPlayerAction(int choice);
         void movePlayer();
         Player applyTileEffect(int roll);
-
-        vector<Player> initializePlayersOnPath(vector<Player> players);
         void updateTurn();
 
+        // Sort players by who has the most main_stat
         vector<Player> bubbleSortPlayers();
 
         Board _board;

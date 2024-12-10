@@ -1,3 +1,4 @@
+Name|Description|Advisor|Main stat change
 Groin|Pulled your groin.|LeMom|-500
 Fatigue|Averaging 45 minutes per game! LeTired!|Keith Dambrot|-200
 CaughtLying|Caught Lying! NOOOO!|Bryce|-400

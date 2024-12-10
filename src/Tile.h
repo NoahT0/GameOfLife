@@ -45,7 +45,6 @@ class Tile
         void setAdditionalEffect(string additional_effects);
         void setExtraData(string data);
 
-        //Player applyEffect(Player player, vector<Event> events, int turn, int roll, bool extra_turn[1]);
         Player changePlayerStats(Player player);
         Player doRandom(Player player, vector<Event> events);
         Player moveBack(Player player);
