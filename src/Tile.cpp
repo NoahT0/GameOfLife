@@ -4,6 +4,7 @@
 
 int findAdvisorByName(vector <Advisor> advisors, string name)
 {
+    // Loop through advisors unitl advisor with particular name is found
     for(int i = 0; i<advisors.size(); i++)
     {
         if(toUpperString(advisors[i].name) == toUpperString(name))
@@ -17,12 +18,13 @@ vector<Advisor> getAdvisors()
 {
     vector<Advisor> advisors;
     
-    //ifstream advisor_file("Files/advisors.txt");
     ifstream advisor_file = getInputStream("advisors.txt");
 
     string line;
+    getline(advisor_file, line);
     while(getline(advisor_file,line))
     {
+        // advisor name|advisor ability
         string arr[2];
         split(line, '|',arr,2);
         Advisor advisor = {arr[0], arr[1]};
@@ -34,29 +36,35 @@ vector<Advisor> getAdvisors()
 }
 Player advisorSelect(Player player)
 {
+    vector<Advisor> advisors = getAdvisors();
+
+    // Loop until valid advisor is selected
     int advisor_index = -1;
     while(advisor_index<0)
     {
+        // Display advisor options
         cout << "Advisor choices: " << endl;
-        vector<Advisor> advisors = getAdvisors();
+        
         for(int i = 0; i<advisors.size(); i++)
         {
-            //advisors[i].printProfile();
             printAdvisorProfile(advisors[i]);
         }
         cout << endl;
+
+        // Prompt and get input for name
         cout << player.getPlayerTitle() << ", enter advisor name:" << endl;
         string name;
         getline(cin, name);
         advisor_index = findAdvisorByName(advisors,name);
-
         cout << endl;
+
         if(advisor_index<0)
         {
             cout << "Invalid advisor name. Try again." << endl;
         }
         else
         {
+            // Set player advisor and display chosen advisor
             player.setAdvisor(advisors[advisor_index]);
             cout << player.getPlayerTitle() << " chose " << advisors[advisor_index].name << "!" << endl;
         }
@@ -123,7 +131,7 @@ void displayPathOptions(Player player, vector<string> path_descriptions)
     for(int i = 0; i < path_descriptions.size(); i++)
     {
         cout << (i+1) << ". " << path_descriptions[i] << endl;
-        cout << endl;
+        cout << "-------------------------" << endl;
     }
     cout << player.getPlayerTitle() << " enter path with corresponding number: " << endl;
 }
@@ -374,6 +382,8 @@ string Tile::getRandomRiddle()
     return riddles[riddle_num];
 }
 
+// Returns string saying what particular tile does to stat values
+// Ex: If tile has stats: -100|-100|-100, then return string Lose 100 stat1, stat2 and stat3
 string Tile::getStatWinsAndLoss()
 {
     // Get vector containing all the different possible stat values
@@ -381,6 +391,7 @@ string Tile::getStatWinsAndLoss()
 
     for(int i = 0; i < _stats.size(); i++)
     {
+        
         bool found = false;
         for(int j = 0; j < all_stats.size(); j++)
         {
@@ -389,6 +400,9 @@ string Tile::getStatWinsAndLoss()
                 found = true;
             }
         }
+        // If particular stat value is not found in vector and not just 0 then add it to all stats
+        // Ex: all_stats = {100,-300} and _stats[i] = 400. then 400 will be added to all_stats -> all_stats = {100,-300,400}
+        // Ex: all_stats = {100,-300} and _stats[i] = 100. then it won't be added so stil -> all_stats = {100,-300}
         if(!found && _stats[i] != 0)
         {
             all_stats.push_back(_stats[i]);

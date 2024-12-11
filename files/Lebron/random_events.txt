@@ -7,3 +7,4 @@ Hennesy|Start the day with the King inside you! Fuel up on the LeHennesy!|n/a|80
 Taco|Taco Tuesday!!! Yay!|n/a|900
 Three|Make three in a row with family!|n/a|500
 Lyrics|Messed up the lyrics to a song!|Bryce|-500
+Son|Play with your son in the NBA!|n/a|1000

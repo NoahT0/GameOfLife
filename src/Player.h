@@ -41,7 +41,6 @@ class Player
         void displayAdvisor();
         void printStats();
         void printFinalStats();
-        void printStatsWithArt(int imageNum);
 
     private:
         string _name;
@@ -54,8 +53,6 @@ class Player
         // Board stuff
         int _path;
         int _position;
-
-        bool iterateToImage(ifstream &input_file, int imageNum);
 };
 
 #endif

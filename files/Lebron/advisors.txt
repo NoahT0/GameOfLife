@@ -1,3 +1,4 @@
+Name|Ability
 LeMom|Birth
 Bryce|Inspiration
 Curry|Father

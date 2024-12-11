@@ -253,8 +253,7 @@ bool Board::isPlayerOnTile(int player_index, int path, int pos)
     }
     return false;
 }
-// Returns vector containing indicies of the players who are on a 
-// particular tile
+// Returns vector containing indicies of the players who are on a particular tile
 vector<int> Board::playersOnTile(int path, int pos)
 {
     vector<int> players;

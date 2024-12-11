@@ -7,6 +7,12 @@ class Game
 {
     public:
         Game(string theme);
+        Board getBoard();
+        int getTurn();
+
+        void setBoard(Board board);
+        void setTurn(int turn);
+
         int getNumPlayers();
         void takeTurn();
         bool isFinished();

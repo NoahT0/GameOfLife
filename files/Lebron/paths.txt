@@ -60,8 +60,8 @@ Path Initialization:
 52
 0
 Tiles and Percentages:
-Switch|TornACL|LeRiddle
-100|1|1
-100|1|1
+Switch|TornACL|LeRiddle|Shoe
+0|1|1|50
+100|1|1|0
 Random Events:
 Groin|CaughtLying|Taco|Hennesy

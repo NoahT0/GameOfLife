@@ -25,6 +25,28 @@ Game::Game(string theme)
 
     _extra_turn = false;
 }
+
+Board Game::getBoard()
+{
+    return _board;
+}
+int Game::getTurn()
+{
+    return _turn;
+}
+
+void Game::setBoard(Board board)
+{
+    _board = board;
+}
+void Game::setTurn(int turn)
+{
+    if(turn >= 0)
+    {
+        _turn = turn;
+    }
+}
+
 vector<Player> Game::characterSelect()
 {
     vector<Player> possible_players = getPossiblePlayers();
@@ -94,7 +116,7 @@ void Game::printPlayerStats(vector<Player> players)
     for(int i = 0; i<players.size(); i++)
     {
         players[i].printStats();
-        cout << endl;   // Extra line for spacing
+        cout << "------------------------" << endl;   // Extra line for spacing
     }
 }
 vector<Player> Game::getPossiblePlayers()
@@ -326,12 +348,38 @@ Player Game::applyTileEffect(int roll)
         string path_name = _board.getPathAtPlayer(player.getNum()-1).getName();
         vector<string> board_descriptions = _board.getPathDescriptions();
         vector<int> path_sizes = _board.getPathSizes();
-        
+
         player = tile.switchPath(player, path_name, board_descriptions, path_sizes);
+
+
+        // Check if player is now at an end tile for when player switches from longer path to shorter
+        player_path = _board.getPaths()[player.getPath()];
+        tile = player_path.getTiles()[player.getPosition()];
+        effect = tile.getAdditionalEffect();
+        
+        if(effect == "end")
+        {
+            cout << player.getPlayerTitle() << " finished!" << endl;
+            cout << "Final Stats: " << endl;
+            player.printFinalStats();
+            cout << endl;
+        }
+
     }
     else if(effect == "riddle")
     {
         player = tile.doRiddle(player);
+    }
+    else if(effect == "end")
+    {
+        cout << player.getPlayerTitle() << " finished!" << endl;
+        cout << "Final Stats: " << endl;
+        player.printFinalStats();
+        cout << endl;
+    }
+    else
+    {
+        cout << tile.getStatWinsAndLoss() << endl;
     }
 
     return player;
@@ -385,6 +433,6 @@ void Game::displayWinner()
     {
         cout << "Place: " << (i+1) << endl;
         players[i].printFinalStats();
-        cout << endl;
+        cout << "-----------------------" << endl;
     }
 }

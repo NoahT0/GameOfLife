@@ -104,6 +104,7 @@ string toUpperString(string str)
 
 vector<string> getStatNames()
 {
+    // stat1|stat2|stat3|etc|main stat
     ifstream stat_file = getInputStream("stat_settings.txt");
     
     string line;
@@ -173,19 +174,6 @@ int getIndexOfStatByName(string name)
     return -1;
 }
 
-// ifstream getInputStream(string path_name, string file_name)
-// {
-//     ifstream input_file(path_name + "/" + file_name);
-    
-//     if(!input_file.is_open())
-//     {
-//         cout << file_name << " failed to open." << endl;
-//     }
-//     assert(input_file.is_open());
-
-//     return input_file;
-// }
-
 ifstream getInputStream(string file_name)
 {
     ifstream theme_file("../files/theme_choice.txt");
@@ -198,8 +186,8 @@ ifstream getInputStream(string file_name)
     string theme;
     getline(theme_file,theme);
     theme_file.close();
-
-    //return getInputStream("../files/" + theme + "/", file_name);
+    
+    // Finds selected theme in theme_choice.txt to complete path to desired file
     ifstream input_file("../files/" + theme + "/" + file_name);
     
     if(!input_file.is_open())
@@ -218,7 +206,6 @@ void stringToIntArray(string arr1[], int arr2[], int size)
         arr2[i] = stoi(arr1[i]);
     }
 }
-//int split(string input_string, char separator, string arr[], const int ARR_SIZE);
 
 ifstream iterateToStringInStream(string file_name, vector<string> strings)
 {
@@ -277,6 +264,7 @@ vector<int> vectorStringToInt(vector<string> vec)
     vector<int> result(vec.size());
     for(int i = 0; i<result.size(); i++)
     {
+        assert(validateInt(vec[i]));
         result[i] = stoi(vec[i]);
     }
     

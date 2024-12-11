@@ -10,7 +10,7 @@ Grey|none
 
 End
 Pride Rock
-Orange|none
+Orange|end
 0|0|0
 
 Regular

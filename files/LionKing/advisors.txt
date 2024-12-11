@@ -1,3 +1,4 @@
+Name|Ability
 Rafiki|Invisibility
 Nala|Night Vision
 Sarabi|Energy Manipulation

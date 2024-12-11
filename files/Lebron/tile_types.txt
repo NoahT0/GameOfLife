@@ -10,7 +10,7 @@ Grey|none
 
 End
 LeRetirement
-Orange|none
+Orange|end
 0|0|0|0
 
 Regular
@@ -47,3 +47,8 @@ Switch
 It's 2010 LEBRON! Time for a decision!!! Are you taking your talents to South Beach or elsewhere?
 Yellow|switch
 0|500|500|0
+
+Shoe
+New shoe just dropped! LFG!!!
+Ube|none
+0|0|1000|100

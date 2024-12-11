@@ -97,7 +97,6 @@ string theme_select()
 int main()
 {
     srand(time(0));
-    cout << " hello" << endl;
     
     string theme = theme_select();
 

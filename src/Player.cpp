@@ -6,6 +6,7 @@
 vector<string> getStatNames();
 string getMainStatName();
 void printAdvisorProfile(Advisor advisor);
+string toUpperString(string str);
 
 Player::Player()
 {
@@ -174,76 +175,6 @@ void Player::move()
     _position++;
 }
 
-
-void Player::printStatsWithArt(int imageNum)
-{
-    string stats_lines[5] = 
-    {
-        _name + ", age " + to_string(_age),
-        //"Strength: " + to_string(_strength),
-        //"Stamina: " + to_string(_stamina),
-        //"Wisdom: " + to_string(_wisdom),
-        "Pride Points: " + to_string(_main_stat)
-        
-    };
-
-    
-    ifstream input_file("Files/ascii_art.txt");
-    if(!input_file.is_open())
-    {
-        return;
-    }
-    
-    // Find start
-    if(!iterateToImage(input_file, imageNum))
-    {
-        cout << "no image" << endl;
-        return;
-    }
-    string line;
-
-    // Print out stats alongside art
-    int count = 0;
-    while(getline(input_file, line) && line.length()>0)
-    {
-        if(count < 5)
-        {
-            cout << setw(20) << left << line << stats_lines[count] << endl;
-            count ++;
-        }
-        else
-        {
-            cout << line << endl;
-        }
-        
-    }
-
-    // Print out stats that go past art
-    while(count<5)
-    {
-        cout << setw(20) << "" << stats_lines[count] << endl;
-        count++;
-    }
-
-    input_file.close();
-}
-bool Player::iterateToImage(ifstream &input_file, int imageNum)
-{
-    string line;
-    int curImage = 0;
-    while(curImage != imageNum && getline(input_file, line))
-    {
-        if(line.length() == 0)
-        {
-            curImage ++;
-        }
-    }
-    if(curImage == imageNum)
-    {
-        return true;
-    }
-    return false;
-}
 void Player::printStats()
 {   
     // Print out name and age
@@ -281,8 +212,18 @@ void Player::displayProgress()
     {
         cout << _stats[i] << " " << stat_names[i] << "," << endl;
     }
-
+    
     cout << "and " << _stats[_stats.size()-1] << " " << stat_names[stat_names.size()-1] << "." << endl;
+
+    // Display converted main stat
+    cout << "Do you want to see how many converted " << getMainStatName() << "'s you have? Yes(Y) or No(N)." << endl;
+    string choice;
+    cin >> choice;
+    if(toUpperString(choice) == "Y")
+    {
+        cout << getPlayerTitle() << " has " << getConvertedMainStat() << " converted " << getMainStatName() << "." << endl;
+    }
+    cin.ignore();
     
 }
 void Player::displayCharacter()
@@ -296,8 +237,24 @@ void Player::displayAdvisor()
     if(_advisor.name.length() == 0)
     {
         cout << "No current advisor." << endl;
-        return;
     }
-    cout << getPlayerTitle() << "'s current advisor: " << endl;
-    printAdvisorProfile(_advisor);
+    else
+    {
+        cout << getPlayerTitle() << "'s current advisor: " << endl;
+        printAdvisorProfile(_advisor);
+    }
+    
+    cout << "Do you want to keep using your current advisor? Yes(Y) or No(N)." << endl;
+    
+    string choice;
+    cin >> choice;
+    if(toUpperString(choice) == "N")
+    {
+        cout << "Too bad!" << endl;
+    }
+    else
+    {
+        cout << "Cool" << endl;
+    }
+    cin.ignore();
 }
