@@ -7,3 +7,4 @@ Lying Ability|When did Lebron start the book?|A couple days ago|800
 Lying Ability|How many points did Lebron predict Kobe to score on the night Kobe went for 81?|70|1000
 Aura|Who's the nba's goat? (First and Last)|Lebron James|5000
 Aura|Smash or Pass Lebron?|Smash|1000
+Wins|The Bronze Jade|Lebron James|3000

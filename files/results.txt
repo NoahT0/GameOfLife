@@ -1,0 +1,23 @@
+Place: 1
+Player 2 Zuri, age 7
+Strength: 1500
+Stamina: 1700
+Wisdom: 3600
+Pride Points: 13900
+Converted Pride Points: 81900
+-----------------------
+Place: 2
+Player 3 Elsa, age 12
+Strength: 600
+Stamina: 1600
+Wisdom: 3300
+Pride Points: 25800
+Converted Pride Points: 80800
+-----------------------
+Place: 3
+Player 1 Roary, age 18
+Strength: 500
+Stamina: 900
+Wisdom: 3400
+Pride Points: 25100
+Converted Pride Points: 73100

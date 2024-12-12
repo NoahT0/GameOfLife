@@ -41,6 +41,7 @@ class Player
         void displayAdvisor();
         void printStats();
         void printFinalStats();
+        string getFinalStats();
 
     private:
         string _name;

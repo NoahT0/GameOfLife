@@ -424,15 +424,29 @@ vector<Player> Game::bubbleSortPlayers()
     return players;
 }
 
-// Gets the sorted players and then displays them in order
+// Gets the sorted players and then displays them in order and writes them to the results file
 void Game::displayWinner()
 {
+    ofstream result_file("../files/results.txt");
+    
     vector<Player> players = bubbleSortPlayers();
     cout << "Winner: " << players[0].getName() << endl;
     for(int i = 0; i < players.size(); i++)
     {
         cout << "Place: " << (i+1) << endl;
-        players[i].printFinalStats();
-        cout << "-----------------------" << endl;
+        result_file << "Place: " << (i+1) << endl;
+
+        string final_stats = players[i].getFinalStats();
+        result_file << final_stats;
+        cout << players[i].getFinalStats();
+        
+        if(i + 1 < players.size())
+        {
+            cout << "-----------------------" << endl;
+            result_file << "-----------------------" << endl;
+        }
+        
     }
+
+    result_file.close();
 }

@@ -199,6 +199,28 @@ void Player::printFinalStats()
     printStats();
     cout << "Converted " << getMainStatName() << ": " << getConvertedMainStat() << endl;
 }
+string Player::getFinalStats()
+{
+    // Add name and age to string
+    string result = "Player " + to_string(_num) + " ";
+    result += _name + ", age " + to_string(_age) + "\n";
+
+    // Add stats to string
+    vector<string> stat_names = getStatNames();
+    assert(stat_names.size() == _stats.size());
+
+    for(int i = 0; i < stat_names.size(); i++)
+    {
+        result += stat_names[i] + ": " + to_string(_stats[i]) + "\n";
+    }
+
+    // Print main stat
+    result += getMainStatName() + ": " + to_string(_main_stat) + "\n";
+
+    result += "Converted " + getMainStatName() + ": " + to_string(getConvertedMainStat()) + "\n";
+
+    return result;
+}
 void Player::displayProgress()
 {
     // Print main stat

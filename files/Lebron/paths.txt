@@ -24,7 +24,7 @@ TornACL|LeOver|FreeAgentSign|LeRiddle|counseling|Switch
 20|20|25|20|15|10
 20|20|15|30|15|10
 Random Events:
-Groin|Fatigue|Diddy
+Groin|Fatigue|Lyrics|Fatigue
 
 College
 500|200|500|500|5000
@@ -37,28 +37,28 @@ TornACL|LeOver|FreeAgentSign|LeRiddle|counseling
 40|5|5|50|0
 15|15|25|25|20
 Random Events:
-Groin|CaughtLying|Diddy|Hennesy
+Groin|CaughtLying|Hennesy|Legacy
 
 Straight to the NBA
 300|2000|2000|500|233400
 0
 Path Initialization:
-42
-30
+70
+40
 Tiles and Percentages:
 LeOver|LeRiddle|counseling
 0|1|0
 0|0|1
 1|0|0
 Random Events:
-Groin|CaughtLying|Diddy|Hennesy|Lyrics|Taco|Three
+Groin|CaughtLying|Hennesy|Lyrics|Taco|Three|Legacy|Son
 
 Shanghai Sharks
 20000|20000|500|10000|-5000
 1
 Path Initialization:
 52
-0
+1
 Tiles and Percentages:
 Switch|TornACL|LeRiddle|Shoe
 0|1|1|50
